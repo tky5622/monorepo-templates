@@ -2,6 +2,11 @@
   "name": "standiart",
   "version": "0.0.0",
   "license": "MIT",
+  "workspaces": [
+    "libs/*",
+    "apps/*",
+    "tools"
+  ],
   "scripts": {
     "start": "nx serve",
     "build": "nx build",
@@ -10,19 +15,27 @@
     "hooks:new": "hygen hooks new",
     "prepare": "husky install",
     "check-types": "bash -c tsc --noEmit",
-    "lint": "nx format:write --all"
-  },
-  "lint-staged": {
-    "*.@(ts|tsx)": [
-      "npx lint",
-      "npx format",
-      "npx check-types"
-    ]
+    "lint": "nx format:write --all",
+    "affected:lint": "nx affected:lint",
+    "format:write": "nx format:write"
   },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
     }
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "lint-staged": {
+    "{apps,libs}/**/*.{ts,json,tsx,html}": [
+      "npm run affected:lint --uncommitted --parallel --fix=true",
+      "npm run format:write --uncommitted",
+      "npx check-types",
+      "git add"
+    ]
   },
   "private": true,
   "dependencies": {
