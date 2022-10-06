@@ -19,7 +19,7 @@ const PlayerContext: React.FC = () => {
       // player.cls.initPlayer('https://i-00c56684d4fff23e4.cloudvec.com')
       system.cls.connectBuild('lumen')
     }
-  }, [player.cls.initReady])
+  }, [player.cls.initReady, system.cls])
 
   //   const playerConfig: PlayerPropsSchema = {
   //     metaConfig: null,
