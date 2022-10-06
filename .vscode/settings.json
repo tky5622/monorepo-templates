@@ -67,6 +67,20 @@
       "--proto_path=${env.GOPATH}/src"
     ]
   },
+  // CSSのチェック機能をオフ
+  "css.validate": false,
+
+  // JSXでもCSSクラスを補完できるように
+  "editor.quickSuggestions": {
+    "strings": true
+  },
+
+  // emmetでTailwind CSSのクラスを使えるように
+  "tailwindCSS.emmetCompletions": true,
+
+  // Tailwind CSSのDirectivesをLintする
+  "tailwindCSS.validate": true,
+
   // REST client
   "rest-client.environmentVariables": {
     "$shared": {
