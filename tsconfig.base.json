@@ -15,10 +15,10 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@hoge/contract": ["apps/contract/typechain/index.ts"],
       "@wpkyoto/pixel-streaming-editor": [
         "libs/pixel-streaming-editor/src/index.ts"
-      ],
-      "@hoge/contract": ["apps/contract/typechain/index.ts"]  
+      ]
     }
   },
   "exclude": ["node_modules", "tmp"]

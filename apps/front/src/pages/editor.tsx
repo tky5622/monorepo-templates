@@ -23,10 +23,6 @@ const Editor: NextPage = () => {
         </NoSSR>
       </main>
 
-
-
-
-
       <footer className={styles.footer}></footer>
     </div>
   )

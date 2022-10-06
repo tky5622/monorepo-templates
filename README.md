@@ -1,5 +1,3 @@
-
-
 # Standiart
 
 This project was generated using [Nx](https://nx.dev).
@@ -49,9 +47,6 @@ REPORT_GAS=true npx hardhat test
 npx hardhat node
 npx hardhat run scripts/deploy.ts
 ```
-
-
-
 
 ## Adding capabilities to your workspace
 
@@ -123,8 +118,6 @@ Run `nx graph` to see a diagram of the dependencies of your projects.
 ## Further help
 
 Visit the [Nx Documentation](https://nx.dev) to learn more.
-
-
 
 ## ☁ Nx Cloud
 

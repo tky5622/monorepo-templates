@@ -1,6 +1,5 @@
-import { renderHook, act } from '@testing-library/react';
-import { useWeb3 } from './useWeb3';
-
+import { renderHook, act } from '@testing-library/react'
+import { useWeb3 } from './useWeb3'
 
 test.each([
   [true, false],
@@ -8,10 +7,10 @@ test.each([
 ])(
   'Initial Stateが%sの場合。toggleを実行すると、stateは%sとなる',
   (initialState, expected) => {
-    const { result } = renderHook(() => useWeb3(initialState));
+    const { result } = renderHook(() => useWeb3(initialState))
     act(() => {
-      result.current.toggle();
-    });
-    expect(result.current.state).toBe(expected);
+      result.current.toggle()
+    })
+    expect(result.current.state).toBe(expected)
   }
-);
+)
