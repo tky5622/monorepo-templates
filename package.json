@@ -10,7 +10,7 @@
     "hooks:new": "hygen hooks new",
     "prepare": "husky install",
     "check-types": "bash -c tsc --noEmit",
-    "lint": "next lint"
+    "lint": "nx format:write --all"
   },
   "lint-staged": {
     "*.@(ts|tsx)": [
