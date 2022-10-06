@@ -1,3 +1,4 @@
+/* eslint-disable react/react-in-jsx-scope */
 import styled from '@emotion/styled'
 
 /* eslint-disable-next-line */
