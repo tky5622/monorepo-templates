@@ -33,8 +33,7 @@
     "{apps,libs}/**/*.{ts,json,tsx,html}": [
       "npm run affected:lint --uncommitted --parallel --fix=true",
       "npm run format:write --uncommitted",
-      "npx check-types",
-      "git add"
+      "npx check-types"
     ]
   },
   "private": true,
