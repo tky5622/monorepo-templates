@@ -5,11 +5,8 @@ import 'rsuite/dist/rsuite.min.css'
 
 // libs
 import {
-  Player,
-  ContextProvider,
-  usePlayer,
-  useSystem,
-  PlayerPropsSchema,
+  ContextProvider, Player, usePlayer,
+  useSystem
 } from 'pixel-streaming'
 
 // TODO: split context file later
