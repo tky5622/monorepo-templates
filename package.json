@@ -16,6 +16,11 @@
       "npx check-types"
     ]
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },  
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.7.0",
