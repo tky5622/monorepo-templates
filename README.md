@@ -118,3 +118,17 @@ $ nx g @nrwl/nest:controller --name=XXX --project=backend --directory=components
 
 npm install -g @graphprotocol/graph-cli
 graph init --from-contract 0xf3E6DbBE461C6fa492CeA7Cb1f5C5eA660EB1B47 \ --contract-name Token --index-events
+
+## commitlint
+
+- build: ビルドに関すること
+- chore: カテゴライズできない雑事
+- ci: ci に関すること
+- docs: ドキュメント編集など
+- feat: 新機能開発
+- fix: バグフィックス
+- perf: パフォーマンス向上
+- refactor: リファクタリング
+- revert: コミット取り消し
+- style: コードスタイルに関すること
+- test: テストに関すること

@@ -35,8 +35,7 @@
       "npm run affected:lint --uncommitted --parallel --fix=true",
       "npm run format:write --uncommitted",
       "npx check-types",
-      "git add",
-      "npm run -s commitmsg"
+      "git add"
     ]
   },
   "private": true,
