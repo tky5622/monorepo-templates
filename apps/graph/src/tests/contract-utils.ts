@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { newMockEvent } from "matchstick-as"
 import { ethereum, Address, BigInt } from "@graphprotocol/graph-ts"
 import {
@@ -10,21 +11,21 @@ import {
 export function createApprovalEvent(
   owner: Address,
   approved: Address,
-  tokenId: bigint
+  tokenId: BigInt
 ): Approval {
   const approvalEvent = changetype<Approval>(newMockEvent())
 
   approvalEvent.parameters = []
 
   approvalEvent.parameters.push(
-    new ethereum.EventParam("owner", ethereum.Value.fromAddress(owner))
+    new ethereum.EventParam('owner', ethereum.Value.fromAddress(owner))
   )
   approvalEvent.parameters.push(
-    new ethereum.EventParam("approved", ethereum.Value.fromAddress(approved))
+    new ethereum.EventParam('approved', ethereum.Value.fromAddress(approved))
   )
   approvalEvent.parameters.push(
     new ethereum.EventParam(
-      "tokenId",
+      'tokenId',
       ethereum.Value.fromUnsignedBigInt(tokenId)
     )
   )
@@ -80,21 +81,21 @@ export function createOwnershipTransferredEvent(
 export function createTransferEvent(
   from: Address,
   to: Address,
-  tokenId: bigint
+  tokenId: BigInt
 ): Transfer {
   const transferEvent = changetype<Transfer>(newMockEvent())
 
   transferEvent.parameters = []
 
   transferEvent.parameters.push(
-    new ethereum.EventParam("from", ethereum.Value.fromAddress(from))
+    new ethereum.EventParam('from', ethereum.Value.fromAddress(from))
   )
   transferEvent.parameters.push(
-    new ethereum.EventParam("to", ethereum.Value.fromAddress(to))
+    new ethereum.EventParam('to', ethereum.Value.fromAddress(to))
   )
   transferEvent.parameters.push(
     new ethereum.EventParam(
-      "tokenId",
+      'tokenId',
       ethereum.Value.fromUnsignedBigInt(tokenId)
     )
   )
