@@ -17,7 +17,8 @@
     "check-types": "bash -c tsc --noEmit",
     "lint": "nx format:write --all",
     "affected:lint": "nx affected:lint",
-    "format:write": "nx format:write"
+    "format:write": "nx format:write",
+    "commitmsg": "commitlint -e $GIT_PARAMS"
   },
   "husky": {
     "hooks": {

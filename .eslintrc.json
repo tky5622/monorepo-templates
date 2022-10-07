@@ -16,6 +16,8 @@
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {
+        "react/prop-types": "off",
+        "react/react-in-jsx-scope": "off",
         "@nrwl/nx/enforce-module-boundaries": [
           "error",
           {
