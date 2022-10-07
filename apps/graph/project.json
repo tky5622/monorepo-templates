@@ -1,0 +1,52 @@
+{
+  "name": "graph",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/graph/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "target": "node",
+        "compiler": "tsc",
+        "outputPath": "dist/apps/graph",
+        "main": "apps/graph/src/main.ts",
+        "tsConfig": "apps/graph/tsconfig.app.json",
+        "assets": ["apps/graph/src/assets"]
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false,
+          "fileReplacements": [
+            {
+              "replace": "apps/graph/src/environments/environment.ts",
+              "with": "apps/graph/src/environments/environment.prod.ts"
+            }
+          ]
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/js:node",
+      "options": {
+        "buildTarget": "graph:build"
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "graph:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/graph/**/*.ts"]
+      }
+    }
+  },
+  "tags": []
+}
