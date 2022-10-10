@@ -132,3 +132,7 @@ graph init --from-contract 0xf3E6DbBE461C6fa492CeA7Cb1f5C5eA660EB1B47 \ --contra
 - revert: コミット取り消し
 - style: コードスタイルに関すること
 - test: テストに関すること
+
+## next
+
+npx nx generate @nrwl/next:page --name=topics --project=site
