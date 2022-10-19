@@ -1,14 +1,15 @@
-import '../styles/globals.css'
-import { NextPage } from 'next'
-import { AppProps } from 'next/app'
-import Head from 'next/head'
-import { useState } from 'react'
+import { NextPage } from 'next';
+import { AppProps } from 'next/app';
+import Head from 'next/head';
+import { useState } from 'react';
+import '../styles/globals.css';
+import '../styles/player.css';
 
 import {
   ColorScheme,
   ColorSchemeProvider,
-  MantineProvider,
-} from '@mantine/core'
+  MantineProvider
+} from '@mantine/core';
 
 const App: NextPage<AppProps> = ({ Component, pageProps }) => {
   const [colorScheme, setColorScheme] = useState<ColorScheme>('dark')

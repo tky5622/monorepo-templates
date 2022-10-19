@@ -1,11 +1,13 @@
-import { load } from '@standiart/pixel-streaming-editor';
+// import { load } from '@standiart/my-lib';
 import React from 'react';
+import { load } from '../../../share/app';
+import EditorTemplate from '../../../share/editorPage/EditorTemplate';
 const UE5: React.FC = () => {
   React.useEffect(() => {
   // Your code here
   load();
 }, []);
-  return (<div id='ue4'/>)
+  return (<EditorTemplate/>)
 }
 
 export default UE5

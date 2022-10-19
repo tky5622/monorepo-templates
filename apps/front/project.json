@@ -19,30 +19,23 @@
           "outputPath": "apps/front"
         },
         "production": {}
-      },
-      "dependsOn": [
-        "build-custom-server"
-      ]
+      }
     },
     "serve": {
       "executor": "@nrwl/next:server",
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "front:build",
-        "dev": true,
-        "customServerTarget": "front:serve-custom-server"
+        "dev": true
       },
       "configurations": {
         "development": {
           "buildTarget": "front:build:development",
-          "dev": true,
-          "customServerTarget": "front:serve-custom-server:development"
+          "dev": true
         },
         "production": {
           "buildTarget": "front:build:production",
-          "dev": false,
-          "customServerTarget": "front:serve-custom-server:production"
-        }
+          "dev": false        }
       }
     },
     "export": {
@@ -70,36 +63,6 @@
         "lintFilePatterns": [
           "apps/front/**/*.{ts,tsx,js,jsx}"
         ]
-      }
-    },
-    "build-custom-server": {
-      "executor": "@nrwl/js:tsc",
-      "defaultConfiguration": "production",
-      "options": {
-        "outputPath": "dist/apps/front",
-        "main": "apps/front/server/main.ts",
-        "tsConfig": "apps/front/tsconfig.server.json",
-        "clean": false,
-        "assets": []
-      },
-      "configurations": {
-        "development": {},
-        "production": {}
-      }
-    },
-    "serve-custom-server": {
-      "executor": "@nrwl/js:node",
-      "defaultConfiguration": "development",
-      "options": {
-        "buildTarget": "front:build-custom-server"
-      },
-      "configurations": {
-        "development": {
-          "buildTarget": "front:build-custom-server:development"
-        },
-        "production": {
-          "buildTarget": "front:build-custom-server:production"
-        }
       }
     }
   },
