@@ -16,7 +16,7 @@
     "baseUrl": ".",
     "paths": {
       "@hoge/contract": ["apps/contract/typechain/index.ts"],
-      "@wpkyoto/pixel-streaming-editor": [
+      "@pixel-streaming-editor": [
         "libs/pixel-streaming-editor/src/index.ts"
       ]
     }
