@@ -1,11 +1,11 @@
 /* eslint-disable react/react-in-jsx-scope */
 import type { NextPage } from 'next'
-import Head from 'next/head'
-import styles from '../styles/Home.module.css'
-import NoSSR from '../component/shared/NoSSR'
 import dynamic from 'next/dynamic'
+import Head from 'next/head'
+import NoSSR from '../component/shared/NoSSR'
+import styles from '../styles/Home.module.css'
 
-const CustomPlayer = dynamic(() => import('../component/editor/CustomPlayer'), {
+const UE5 = dynamic(() => import('../component/editor/UE5'), {
   ssr: false,
 })
 
@@ -20,7 +20,7 @@ const Editor: NextPage = () => {
 
       <main className={styles.main}>
         <NoSSR>
-          <CustomPlayer />
+          <UE5 />
         </NoSSR>
       </main>
 

@@ -1,13 +1,13 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import WebSocket from 'ws';
-const httpPort = 80;
-const streamerPort = 8888;
 
 const players = new Map(); // playerId <-> player, where player is either a web-browser or a native webrtc player
 
 const clientConfig = {type: 'config', peerConnectionOptions: {}};
-export function socketAdapter(){
+export function socketAdapter(httpPort: number, streamerPort: number, streamerServer: WebSocket.Server<WebSocket.WebSocket>){
    ///ue4 -> this
-    const streamerServer = new WebSocket.Server({port: streamerPort, backlog: 1});
+    // const streamerServer = new WebSocket.Server({port: streamerPort, backlog: 1});
     let streamer: any; // WebSocket connected to Streamer
     streamerServer.on('connection', function (ws, req) {
         console.log(`Streamer connected: ${req.connection.remoteAddress}`);

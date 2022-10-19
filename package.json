@@ -79,6 +79,7 @@
     "web3modal": "^1.9.9"
   },
   "devDependencies": {
+    "@standiart/pixel-streaming-editor": "0.0.1",
     "@babel/core": "^7.19.3",
     "@commitlint/cli": "^17.1.2",
     "@commitlint/config-conventional": "^17.1.0",

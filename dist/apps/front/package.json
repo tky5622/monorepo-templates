@@ -10,7 +10,6 @@
     "@mantine/core": "^5.5.2",
     "@mantine/next": "^5.5.2",
     "@nrwl/next": "14.8.3",
-    "socket.io": "^4.5.3",
     "@emotion/styled": "11.10.4",
     "rsuite": "^5.19.0",
     "pixel-streaming": "^3.3.6",
