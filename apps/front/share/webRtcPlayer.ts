@@ -147,6 +147,7 @@ export default function(parOptions: Config){
 
         video.id = "streamingVideo";
         video.playsInline = true;
+        video.autoplay = true;
         video.disablePictureInPicture = true;
         video.muted = self.startVideoMuted;
 
@@ -241,6 +242,7 @@ export default function(parOptions: Config){
                     self.availableVideoStreams.set(s.id, s);
                 }
             }
+            console.log(e, e.streams, e.streams[0], 'console log streams')
 
             self.video.srcObject = e.streams[0];
 
@@ -324,6 +326,7 @@ export default function(parOptions: Config){
     };
 
     handleCreateOffer = function (pc: { createOffer: (arg0: any) => Promise<any>; setLocalDescription: (arg0: any) => void; }) {
+        console.warn('handleCreateOffer')
         pc.createOffer(self.sdpConstraints).then(function (offer: any) {
 
             // Munging is where we modifying the sdp string to set parameters that are not exposed to the browser's WebRTC API
@@ -362,6 +365,7 @@ export default function(parOptions: Config){
 
     setupPeerConnection = function (pc: { onsignalingstatechange: any; oniceconnectionstatechange: any; onicegatheringstatechange: any; ontrack: any; onicecandidate: any; ondatachannel: any; }) {
         //Setup peerConnection events
+        console.warn('setupPeerConnection work')
         pc.onsignalingstatechange = onsignalingstatechange;
         pc.oniceconnectionstatechange = oniceconnectionstatechange;
         pc.onicegatheringstatechange = onicegatheringstatechange;
@@ -369,6 +373,7 @@ export default function(parOptions: Config){
         pc.ontrack = handleOnTrack;
         pc.onicecandidate = onicecandidate;
         pc.ondatachannel = onDataChannel;
+        console.warn(pc.ondatachannel, onDataChannel)
     };
 
     generateAggregatedStatsFunction = function(){
@@ -564,6 +569,8 @@ export default function(parOptions: Config){
             self.pcClient = null;
         }
         self.pcClient = new RTCPeerConnection(self.cfg);
+        console.warn('create offer', self.pcClient)
+
         setupPeerConnection(self.pcClient);
 
         setupTransceiversAsync(self.pcClient).finally(function()

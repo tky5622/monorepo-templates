@@ -220,7 +220,9 @@ function setupHtmlEvents() {
             const stream = webRtcPlayerObj.availableVideoStreams.get(streamSelector.value);
             webRtcPlayerObj.video.srcObject = stream;
             streamTrackSource = stream;
+                    webRtcPlayerObj.createOffer();
             webRtcPlayerObj.video.play();
+
             } else {
              console.log('webRtcPlayerObj is undefined',webRtcPlayerObj)
             }
@@ -237,6 +239,8 @@ function setupHtmlEvents() {
                     for (const track of streamTrackSource.getVideoTracks()) {
                         if (track.id == trackSelector.value) {
                             webRtcPlayerObj.video.srcObject = new MediaStream([track]);
+                                    webRtcPlayerObj.createOffer();
+
                             webRtcPlayerObj.video.play();
                             streamSelector.value = "";
                             break;
@@ -376,6 +380,7 @@ function showTextOverlay(text: string) {
 function playStream() {
     console.log('play storm ;;;;;;')
     console.log(webRtcPlayerObj, webRtcPlayerObj.video, webRtcPlayerObj && webRtcPlayerObj.video, 1)
+    console.log(webRtcPlayerObj.video.play)
     if(webRtcPlayerObj && webRtcPlayerObj.video) {
         console.log(webRtcPlayerObj.audio.srcObject, autoPlayAudio, 2)
         if(webRtcPlayerObj.audio.srcObject && autoPlayAudio) {
@@ -390,6 +395,7 @@ function playStream() {
                 console.log("Browser does not support autoplaying audio without interaction - to resolve this we are going to show the play button overlay.")
                 showPlayOverlay();
             });
+                           playVideo();
         } else {
             // Video and audio are combined in the video element
             console.log('simple playvideo')
@@ -413,6 +419,8 @@ function playVideo() {
             webRtcPlayerObj.audio.stop();
             console.log("Stoppppppppppppp")
         }
+                webRtcPlayerObj.createOffer();
+
         console.error(onRejectedReason);
         console.log("Browser does not support autoplaying video without interaction - to resolve this we are going to show the play button overlay.")
         showPlayOverlay();
@@ -564,7 +572,6 @@ function setupWebRtcPlayer(htmlElement: HTMLElement | null, config: { autoPlayAu
             }));
         }
     };
-
     webRtcPlayerObj.onWebRtcAnswer = function (answer: any) {
         if (ws && ws.readyState === WS_OPEN_STATE) {
             const answerStr = JSON.stringify(answer);
@@ -572,6 +579,8 @@ function setupWebRtcPlayer(htmlElement: HTMLElement | null, config: { autoPlayAu
             ws.send(answerStr);
         }
     };
+    console.error('webRtcPlayerObj.onWebRtcAnswer', webRtcPlayerObj.onWebRtcAnswer)
+
 
     webRtcPlayerObj.onVideoInitialised = function() {
         console.log("onVideoInitialised", ws ,ws?.readyState, WS_OPEN_STATE)
@@ -582,6 +591,7 @@ function setupWebRtcPlayer(htmlElement: HTMLElement | null, config: { autoPlayAu
                 resizePlayerStyle();
             }
             else {
+                console.warn('playstreanm')
                 resizePlayerStyle();
                 playStream();
             }
@@ -750,8 +760,10 @@ function setupWebRtcPlayer(htmlElement: HTMLElement | null, config: { autoPlayAu
     }
 
     webRtcPlayerObj.onNewVideoTrack = function(streams: any) {
-        if (webRtcPlayerObj.video && webRtcPlayerObj.video.srcObject && webRtcPlayerObj.onVideoInitialised) {
+        console.warn('onVideo Initialieze')
+        if (webRtcPlayerObj.video && webRtcPlayerObj.video.srcObject) {
             webRtcPlayerObj.onVideoInitialised();
+            console.warn('onVideo Initialieze')
         }
         updateStreamList();
     }
@@ -865,7 +877,7 @@ function setupWebRtcPlayer(htmlElement: HTMLElement | null, config: { autoPlayAu
         createOnScreenKeyboardHelpers(htmlElement);
     }
 
-    //createWebRtcOffer();
+    // createWebRtcOffer();
 
     return webRtcPlayerObj.video;
 }
@@ -1018,6 +1030,7 @@ function setupStats(){
 }
 
 function onWebRtcOffer(webRTCData: any) {
+    console.warn(webRtcPlayerObj, webRTCData )
     webRtcPlayerObj.receiveOffer(webRTCData);
     setupStats();
 }
@@ -2044,7 +2057,7 @@ function connect() {
     console.log(ws, 'console.log ws')
 
     ws.onmessage = function(event) {
-        const msg = JSON.parse(event.data,'ferererfr');
+        const msg = JSON.parse(event.data, 'ferererfr');
         if (msg.type === 'config') {
             console.log("%c[Inbound SS (config)]", "background: lightblue; color: black", msg);
             onConfig(msg);

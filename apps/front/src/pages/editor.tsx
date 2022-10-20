@@ -2,6 +2,7 @@
 import type { NextPage } from 'next'
 import dynamic from 'next/dynamic'
 import Head from 'next/head'
+import React from 'react'
 import NoSSR from '../component/shared/NoSSR'
 import styles from '../styles/Home.module.css'
 
@@ -10,6 +11,19 @@ const UE5 = dynamic(() => import('../component/editor/UE5'), {
 })
 
 const Editor: NextPage = () => {
+  React.useEffect(() => {
+  const script = document.createElement('script');
+
+  script.src = "https://webrtc.github.io/adapter/adapter-latest.js";
+  script.async = true;
+
+  document.body.appendChild(script);
+
+  return () => {
+    document.body.removeChild(script);
+  }
+}, []);
+
   return (
     <div className={styles.container}>
       <Head>
