@@ -1,5 +1,4 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
-/* eslint-disable */
 
 // Window events for a gamepad connecting
 let haveEvents = 'GamepadEvent' in window;
@@ -12,26 +11,26 @@ let kbEvent = document.createEvent("KeyboardEvent");
 let initMethod = typeof kbEvent.initKeyboardEvent !== 'undefined' ? "initKeyboardEvent" : "initKeyEvent";
 
 
-let webRtcPlayerObj: { availableVideoStreams: { get: (arg0: any) => any; }; video: { srcObject: MediaStream; play: () => Promise<any>; }; startLatencyTest: (arg0: (StartTimeMs: any) => void) => void; audio: { srcObject: any; play: () => Promise<any>; stop: () => void; }; createOffer: () => void; send: (arg0: any) => void; onWebRtcOffer: (offer: any) => void; onWebRtcCandidate: (candidate: any) => void; onWebRtcAnswer: (answer: any) => void; onVideoInitialised: () => void; onDataChannelConnected: () => void; setVideoEnabled: (arg0: boolean) => void; onNewVideoTrack: (streams: any) => void; onDataChannelMessage: (data: any) => void; latencyTestTimings: { SetUETimings: (arg0: any) => void; OnAllLatencyTimingsReady: (timings: any) => void; }; aggregateStats: (arg0: number) => void; onAggregatedStats: (aggregatedStats: any) => void; receiveOffer: (arg0: any) => void; receiveAnswer: (arg0: any) => void; handleCandidateFromServer: (arg0: any) => void; close: () => void; } | null | undefined = null;
+let webRtcPlayerObj = null;
 let print_stats = false;
 let print_inputs = false;
 let connect_on_load = false;
 let is_reconnection = false;
-let ws: WebSocket | undefined;
+let ws;
 const WS_OPEN_STATE = 1;
 
 let autoPlayAudio = true;
 let qualityController = false;
-let qualityControlOwnershipCheckBox: HTMLElement | null;
-let matchViewportResolution: any;
+let qualityControlOwnershipCheckBox;
+let matchViewportResolution;
 // TODO: Remove this - workaround because of bug causing UE to crash when switching resolutions too quickly
 let lastTimeResized = new Date().getTime();
-let resizeTimeout: string | number | NodeJS.Timeout | undefined;
+let resizeTimeout;
 
 let onDataChannelConnected;
 let responseEventListeners = new Map();
 
-let freezeFrameOverlay: HTMLDivElement | null = null;
+let freezeFrameOverlay = null;
 let shouldShowPlayOverlay = true;
 // A freeze frame is a still JPEG image shown instead of the video.
 let freezeFrame = {
@@ -69,52 +68,141 @@ let afk = {
 // If the user focuses on a UE4 input widget then we show them a button to open
 // the on-screen keyboard. JavaScript security means we can only show the
 // on-screen keyboard in response to a user interaction.
-let editTextButton: HTMLButtonElement | undefined = undefined;
+let editTextButton = undefined;
 
 // A hidden input text box which is used only for focusing and opening the
 // on-screen keyboard.
-let hiddenInput: HTMLInputElement | undefined = undefined;
+let hiddenInput = undefined;
 
 let t0 = Date.now();
 
-let activeKeys: Iterable<any> | null | undefined = [];
+let activeKeys = [];
 
-function log(str: string) {
+function log(str) {
     console.log(`${Math.floor(Date.now() - t0)}: ` + str);
 }
 
-// function scanGamepads() {
-//     let gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads() : []);
-//     for (let i = 0; i < gamepads.length; i++) {
-//         if (gamepads[i] && (gamepads[i].index in controllers)) {
-//             controllers[gamepads[i].index].currentState = gamepads[i];
-//         }
-//     }
-// }
+function scanGamepads() {
+    let gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads() : []);
+    for (let i = 0; i < gamepads.length; i++) {
+        if (gamepads[i] && (gamepads[i].index in controllers)) {
+            controllers[gamepads[i].index].currentState = gamepads[i];
+        }
+    }
+}
 
 var script = document.createElement('script');
 script.src = 'https://code.jquery.com/jquery-3.4.1.min.js';
 script.type = 'text/javascript';
 document.getElementsByTagName('head')[0].appendChild(script);
 
-// function updateStatus() {
-// }
+function updateStatus() {
+    scanGamepads();
+    // Iterate over multiple controllers in the case the mutiple gamepads are connected
+    for (j in controllers) {
+        let controller = controllers[j];
+        let currentState = controller.currentState;
+        let prevState = controller.prevState;
+        // Iterate over buttons
+        for (let i = 0; i < currentState.buttons.length; i++) {
+            let currButton = currentState.buttons[i];
+            let prevButton = prevState.buttons[i];
+            // Button 6 is actually the left trigger, send it to UE as an analog axis
+            // Button 7 is actually the right trigger, send it to UE as an analog axis
+            // The rest are normal buttons. Treat as such
+            if (currButton.pressed && !prevButton.pressed) {
+                // New press
+                if (i == 6) {
+                    emitControllerAxisMove(j, 5, currButton.value);
+                } else if (i == 7) {
+                    emitControllerAxisMove(j, 6, currButton.value);
+                } else {
+                    emitControllerButtonPressed(j, i, 0);
+                }
+            } else if (!currButton.pressed && prevButton.pressed) {
+                // release
+                if (i == 6) {
+                    emitControllerAxisMove(j, 5, 0);
+                } else if (i == 7) {
+                    emitControllerAxisMove(j, 6, 0);
+                } else {
+                    emitControllerButtonReleased(j, i);
+                }
+            } else if (currButton.pressed && prevButton.pressed) {
+                // repeat press / hold
+                if (i == 6) {
+                    emitControllerAxisMove(j, 5, currButton.value);
+                } else if (i == 7) {
+                    emitControllerAxisMove(j, 6, currButton.value);
+                } else {
+                    emitControllerButtonPressed(j, i, 1);
+                }
+            }
+            // Last case is button isn't currently pressed and wasn't pressed before. This doesn't need an else block
+        }
+        // Iterate over gamepad axes
+        for (let i = 0; i < currentState.axes.length; i += 2) {
+            let x = parseFloat(currentState.axes[i].toFixed(4));
+            // https://w3c.github.io/gamepad/#remapping Gamepad broweser side standard mapping has positive down, negative up. This is downright disgusting. So we fix it.
+            let y = -parseFloat(currentState.axes[i + 1].toFixed(4));
+            if (i === 0) {
+                // left stick
+                // axis 1 = left horizontal
+                emitControllerAxisMove(j, 1, x);
+                // axis 2 = left vertical
+                emitControllerAxisMove(j, 2, y);
+            } else if (i === 2) {
+                // right stick
+                // axis 3 = right horizontal
+                emitControllerAxisMove(j, 3, x);
+                // axis 4 = right vertical
+                emitControllerAxisMove(j, 4, y);
+            }
+        }
+        controllers[j].prevState = currentState;
+    }
+    rAF(updateStatus);
+}
 
-// function emitControllerButtonPressed(controllerIndex: any, buttonIndex: number, isRepeat: number) {
-// }
+function emitControllerButtonPressed(controllerIndex, buttonIndex, isRepeat) {
+    Data = new DataView(new ArrayBuffer(4));
+    Data.setUint8(0, MessageType.GamepadButtonPressed);
+    Data.setUint8(1, controllerIndex);
+    Data.setUint8(2, buttonIndex);
+    Data.setUint8(3, isRepeat);
+}
 
-// function emitControllerButtonReleased(controllerIndex: any, buttonIndex: number) {
-// }
+function emitControllerButtonReleased(controllerIndex, buttonIndex) {
+    Data = new DataView(new ArrayBuffer(3));
+    Data.setUint8(0, MessageType.GamepadButtonReleased);
+    Data.setUint8(1, controllerIndex);
+    Data.setUint8(2, buttonIndex);
+}
 
-// function emitControllerAxisMove(controllerIndex: any, axisIndex: number, analogValue: number) {
-// }
+function emitControllerAxisMove(controllerIndex, axisIndex, analogValue) {
+    Data = new DataView(new ArrayBuffer(11));
+    Data.setUint8(0, MessageType.GamepadAnalog);
+    Data.setUint8(1, controllerIndex);
+    Data.setUint8(2, axisIndex);
+    Data.setFloat64(3, analogValue, true);
+    sendInputData(Data.buffer);
+}
 
-// function gamepadConnectHandler(e: { gamepad: any; }) {
-//     rAF(updateStatus);
-// }
+function gamepadConnectHandler(e) {
+    console.log("Gamepad connect handler");
+    gamepad = e.gamepad;
+    controllers[gamepad.index] = {};
+    controllers[gamepad.index].currentState = gamepad;
+    controllers[gamepad.index].prevState = gamepad;
+    console.log("gamepad: " + gamepad.id + " connected");
+    rAF(updateStatus);
+}
 
-// function gamepadDisconnectHandler(e: { gamepad: { id: string; index: string | number; }; }) {
-// }
+function gamepadDisconnectHandler(e) {
+    console.log("Gamepad disconnect handler");
+    console.log("gamepad: " + e.gamepad.id + " disconnected");
+    delete controllers[e.gamepad.index];
+}
 
 function setupHtmlEvents() {
     //Window events
@@ -122,27 +210,22 @@ function setupHtmlEvents() {
     window.addEventListener('orientationchange', onOrientationChange);
 
     //Gamepad events
-    // if (haveEvents) {
-    //     window.addEventListener("gamepadconnected", gamepadConnectHandler);
-    //     window.addEventListener("gamepaddisconnected", gamepadDisconnectHandler);
-    // } else if (haveWebkitEvents) {
-    //     window.addEventListener("webkitgamepadconnected", gamepadConnectHandler);
-    //     window.addEventListener("webkitgamepaddisconnected", gamepadDisconnectHandler);
-    // }
+    if (haveEvents) {
+        window.addEventListener("gamepadconnected", gamepadConnectHandler);
+        window.addEventListener("gamepaddisconnected", gamepadDisconnectHandler);
+    } else if (haveWebkitEvents) {
+        window.addEventListener("webkitgamepadconnected", gamepadConnectHandler);
+        window.addEventListener("webkitgamepaddisconnected", gamepadDisconnectHandler);
+    }
 
     //HTML elements controls
     let overlayButton = document.getElementById('overlayButton');
-    if(overlayButton) {
     overlayButton.addEventListener('click', onExpandOverlay_Click);
-    } else {
-        console.log('overlayButton is undefined')
-    }
-
 
     let resizeCheckBox = document.getElementById('enlarge-display-to-fill-window-tgl');
     if (resizeCheckBox !== null) {
         resizeCheckBox.onchange = function(event) {
-            resizePlayerStyle(event);
+            resizePlayerStyle();
         };
     }
 
@@ -191,11 +274,7 @@ function setupHtmlEvents() {
     let matchViewportResolutionCheckBox = document.getElementById('match-viewport-res-tgl');
     if (matchViewportResolutionCheckBox !== null) {
         matchViewportResolutionCheckBox.onchange = function (event) {
-            if(matchViewportResolutionCheckBox){
             matchViewportResolution = matchViewportResolutionCheckBox.checked;
-             } else {
-                console.log(matchViewportResolutionCheckBox, 'matchViewportResolutionCheckBox is null')
-             }
         };
     }
 
@@ -203,11 +282,7 @@ function setupHtmlEvents() {
     if (statsCheckBox !== null) {
         statsCheckBox.onchange = function(event) {
             let stats = document.getElementById('statsContainer');
-            if(stats) {
             stats.style.display = event.target.checked ? "block" : "none";
-            }else {
-                console.log(stats, 'stats is null')
-            }
         };
     }
 
@@ -223,35 +298,22 @@ function setupHtmlEvents() {
     setupToggleWithUrlParams("use-mic-tgl", "useMic");
     setupToggleWithUrlParams("force-turn-tgl", "ForceTURN");
     setupToggleWithUrlParams("force-mono-tgl", "ForceMonoAudio")
-
+ 
     var streamSelector = document.getElementById('stream-select');
     var trackSelector = document.getElementById('track-select');
     if (streamSelector) {
         streamSelector.onchange = function(event) {
-            if(webRtcPlayerObj && streamSelector){
-            if(streamSelector.value){
             const stream = webRtcPlayerObj.availableVideoStreams.get(streamSelector.value);
             webRtcPlayerObj.video.srcObject = stream;
             streamTrackSource = stream;
             webRtcPlayerObj.video.play();
             updateTrackList();
-            }else{
-                console.log(streamSelector.value, 'streamSelector.value')
-            }
-            } else {
-                console.log(webRtcPlayerObj, 'webRtcPlayerObj is undefined')
-            }
         }
 
         if (trackSelector) {
             trackSelector.onchange = function(event) {
                 if (!streamTrackSource) {
-                    if(webRtcPlayerObj && streamSelector){
                     streamTrackSource = webRtcPlayerObj.availableVideoStreams.get(streamSelector.value);
-                    } else {
-                        console.log(streamSelector, webRtcPlayerObj, 'webRtcPlayerObj  or steramSelector isundefined')
-                        let streamTrackSource
-                    }
                 }
                 if (streamTrackSource) {
                     for (const track of streamTrackSource.getVideoTracks()) {
@@ -268,7 +330,7 @@ function setupHtmlEvents() {
     }
 }
 
-function setupToggleWithUrlParams(toggleId: string, urlParameterKey: string){
+function setupToggleWithUrlParams(toggleId, urlParameterKey){
     let toggleElem = document.getElementById(toggleId);
     if(toggleElem) {
         toggleElem.checked = new URLSearchParams(window.location.search).has(urlParameterKey);
@@ -284,7 +346,7 @@ function setupToggleWithUrlParams(toggleId: string, urlParameterKey: string){
     }
 }
 
-var streamTrackSource: { getVideoTracks: () => any; } | null = null;
+var streamTrackSource = null;
 
 function updateStreamList() {
     const streamSelector = document.getElementById('stream-select');
@@ -330,7 +392,7 @@ function sendStartLatencyTest() {
         return;
     }
 
-    let onTestStarted = function(StartTimeMs: any) {
+    let onTestStarted = function(StartTimeMs) {
         let descriptor = {
             StartTime: StartTimeMs
         };
@@ -340,7 +402,7 @@ function sendStartLatencyTest() {
     webRtcPlayerObj.startLatencyTest(onTestStarted);
 }
 
-function setOverlay(htmlClass: string, htmlElement: HTMLDivElement | undefined, onClickFunction: { (event: any): void; (event: any): void; (event: any): void; (arg0: MouseEvent): void; } | undefined) {
+function setOverlay(htmlClass, htmlElement, onClickFunction) {
     let videoPlayOverlay = document.getElementById('videoPlayOverlay');
     if (!videoPlayOverlay) {
         let playerDiv = document.getElementById('player');
@@ -378,13 +440,13 @@ function showConnectOverlay() {
     startText.id = 'playButton';
     startText.innerHTML = 'Click to start';
 
-    setOverlay('clickableState', startText, (event: any) => {
+    setOverlay('clickableState', startText, event => {
         connect();
         startAfkWarningTimer();
     });
 }
 
-function showTextOverlay(text: string) {
+function showTextOverlay(text) {
     let textOverlay = document.createElement('div');
     textOverlay.id = 'messageOverlay';
     textOverlay.innerHTML = text ? text : '';
@@ -397,7 +459,7 @@ function playStream() {
             // Video and Audio are seperate tracks
             webRtcPlayerObj.audio.play().then(() => {
                 playVideo();
-            }).catch((onRejectedReason: any) => {
+            }).catch((onRejectedReason) => {
                 console.error(onRejectedReason);
                 console.log("Browser does not support autoplaying audio without interaction - to resolve this we are going to show the play button overlay.")
                 showPlayOverlay();
@@ -406,7 +468,7 @@ function playStream() {
             // Video and audio are combined in the video element
             playVideo();
         }
-
+        
         requestInitialSettings();
         requestQualityControl();
         showFreezeFrameOverlay();
@@ -417,7 +479,7 @@ function playStream() {
 }
 
 function playVideo() {
-    webRtcPlayerObj.video.play().catch((onRejectedReason: any) => {
+    webRtcPlayerObj.video.play().catch((onRejectedReason) => {
         if(webRtcPlayerObj.audio.srcObject) {
             webRtcPlayerObj.audio.stop();
         }
@@ -432,7 +494,7 @@ function showPlayOverlay() {
     img.id = 'playButton';
     img.src = '/images/Play.png';
     img.alt = 'Start Streaming';
-    setOverlay('clickableState', img, (event: any) => {
+    setOverlay('clickableState', img, event => {
         playStream();
     });
     shouldShowPlayOverlay = false;
@@ -449,7 +511,7 @@ function showAfkOverlay() {
     // Show the inactivity warning overlay.
     afk.overlay = document.createElement('div');
     afk.overlay.id = 'afkOverlay';
-    setOverlay('clickableState', afk.overlay, (event: any) => {
+    setOverlay('clickableState', afk.overlay, event => {
         // The user clicked so start the timer again and carry on.
         hideOverlay();
         clearInterval(afk.countdownTimer);
@@ -512,18 +574,18 @@ function createWebRtcOffer() {
     }
 }
 
-function sendInputData(data: ArrayBufferLike) {
+function sendInputData(data) {
     if (webRtcPlayerObj) {
         resetAfkWarningTimer();
         webRtcPlayerObj.send(data);
     }
 }
 
-function addResponseEventListener(name: any, listener: any) {
+function addResponseEventListener(name, listener) {
     responseEventListeners.set(name, listener);
 }
 
-function removeResponseEventListener(name: any) {
+function removeResponseEventListener(name) {
     responseEventListeners.remove(name);
 }
 
@@ -544,14 +606,14 @@ const ToClientMessageType = {
 
 let VideoEncoderQP = "N/A";
 
-function setupWebRtcPlayer(htmlElement: HTMLElement | null, config: { autoPlayAudio: boolean; }) {
-    webRtcPlayerObj = webRtcPlayer(config);
+function setupWebRtcPlayer(htmlElement, config) {
+    webRtcPlayerObj = new webRtcPlayer(config);
     autoPlayAudio = typeof config.autoPlayAudio !== 'undefined' ? config.autoPlayAudio : true;
     htmlElement.appendChild(webRtcPlayerObj.video);
     htmlElement.appendChild(webRtcPlayerObj.audio);
     htmlElement.appendChild(freezeFrameOverlay);
 
-    webRtcPlayerObj.onWebRtcOffer = function(offer: any) {
+    webRtcPlayerObj.onWebRtcOffer = function(offer) {
         if (ws && ws.readyState === WS_OPEN_STATE) {
             let offerStr = JSON.stringify(offer);
             console.log("%c[Outbound SS message (offer)]", "background: lightgreen; color: black", offer);
@@ -559,7 +621,7 @@ function setupWebRtcPlayer(htmlElement: HTMLElement | null, config: { autoPlayAu
         }
     };
 
-    webRtcPlayerObj.onWebRtcCandidate = function(candidate: any) {
+    webRtcPlayerObj.onWebRtcCandidate = function(candidate) {
         if (ws && ws.readyState === WS_OPEN_STATE) {
             ws.send(JSON.stringify({
                 type: 'iceCandidate',
@@ -568,7 +630,7 @@ function setupWebRtcPlayer(htmlElement: HTMLElement | null, config: { autoPlayAu
         }
     };
 
-    webRtcPlayerObj.onWebRtcAnswer = function (answer: any) {
+    webRtcPlayerObj.onWebRtcAnswer = function (answer) {
         if (ws && ws.readyState === WS_OPEN_STATE) {
             let answerStr = JSON.stringify(answer);
             console.log("%c[Outbound SS message (answer)]", "background: lightgreen; color: black", answer);
@@ -597,7 +659,7 @@ function setupWebRtcPlayer(htmlElement: HTMLElement | null, config: { autoPlayAu
     };
 
     function showFreezeFrame() {
-        let base64 = btoa(freezeFrame.jpeg.reduce((data: string, byte: number) => data + String.fromCharCode(byte), ''));
+        let base64 = btoa(freezeFrame.jpeg.reduce((data, byte) => data + String.fromCharCode(byte), ''));
         let freezeFrameImage = document.getElementById("freezeFrameOverlay").childNodes[0];
         freezeFrameImage.src = 'data:image/jpeg;base64,' + base64;
         freezeFrameImage.onload = function() {
@@ -614,9 +676,9 @@ function setupWebRtcPlayer(htmlElement: HTMLElement | null, config: { autoPlayAu
         };
     }
 
+    
 
-
-    function processFileExtension(view: Uint8Array) {
+    function processFileExtension(view) {
         // Reset file if we got a file message and we are not "receiving" it yet
         if(!file.receiving)
         {
@@ -627,7 +689,7 @@ function setupWebRtcPlayer(htmlElement: HTMLElement | null, config: { autoPlayAu
             file.size = 0;
             file.data = [];
             file.timestampStart = (new Date()).getTime();
-            console.log('Received first chunk of file');
+            console.log('Received first chunk of file'); 
         }
 
         let extensionAsString = new TextDecoder("utf-16").decode(view.slice(1));
@@ -635,7 +697,7 @@ function setupWebRtcPlayer(htmlElement: HTMLElement | null, config: { autoPlayAu
         file.extension = extensionAsString;
     }
 
-    function processFileMimeType(view: Uint8Array) {
+    function processFileMimeType(view) {
         // Reset file if we got a file message and we are not "receiving" it yet
         if(!file.receiving)
         {
@@ -646,7 +708,7 @@ function setupWebRtcPlayer(htmlElement: HTMLElement | null, config: { autoPlayAu
             file.size = 0;
             file.data = [];
             file.timestampStart = (new Date()).getTime();
-            console.log('Received first chunk of file');
+            console.log('Received first chunk of file'); 
         }
 
         let mimeAsString = new TextDecoder("utf-16").decode(view.slice(1));
@@ -655,19 +717,19 @@ function setupWebRtcPlayer(htmlElement: HTMLElement | null, config: { autoPlayAu
     }
 
 
-    function processFileContents(view: Uint8Array) {
+    function processFileContents(view) {
         // If we haven't received the intial setup instructions, return
         if(!file.receiving) return;
 
         // Extract the toal size of the file (across all chunks)
         file.size = Math.ceil((new DataView(view.slice(1, 5).buffer)).getInt32(0, true) / 16379 /* The maximum number of payload bits per message*/);
-
+        
         // Get the file part of the payload
         let fileBytes = view.slice(1 + 4);
 
         // Append to existing data that holds the file
         file.data.push(fileBytes);
-
+        
         // Uncomment for debug
         console.log(`Received file chunk: ${ file.data.length }/${ file.size }`);
 
@@ -683,7 +745,7 @@ function setupWebRtcPlayer(htmlElement: HTMLElement | null, config: { autoPlayAu
             // File reconstruction
             /**
              * Example code to reconstruct the file
-             *
+             * 
              * This code reconstructs the received data into the original file based on the mime type and extension provided and then downloads the reconstructed file
              */
             var received = new Blob(file.data, { type: file.mimetype })
@@ -694,7 +756,7 @@ function setupWebRtcPlayer(htmlElement: HTMLElement | null, config: { autoPlayAu
             aj.appendTo('body');
             // aj[0].click();
             aj.remove();
-        }
+        } 
         else if(file.data.length > file.size)
         {
             file.receiving = false;
@@ -702,7 +764,7 @@ function setupWebRtcPlayer(htmlElement: HTMLElement | null, config: { autoPlayAu
         }
     }
 
-    function processFreezeFrameMessage(view: Uint8Array) {
+    function processFreezeFrameMessage(view) {
         // Reset freeze frame if we got a freeze frame message and we are not "receiving" yet.
         if (!freezeFrame.receiving) {
             freezeFrame.receiving = true;
@@ -749,14 +811,14 @@ function setupWebRtcPlayer(htmlElement: HTMLElement | null, config: { autoPlayAu
         }
     }
 
-    webRtcPlayerObj.onNewVideoTrack = function(streams: any) {
+    webRtcPlayerObj.onNewVideoTrack = function(streams) {
         if (webRtcPlayerObj.video && webRtcPlayerObj.video.srcObject && webRtcPlayerObj.onVideoInitialised) {
             webRtcPlayerObj.onVideoInitialised();
         }
         updateStreamList();
     }
 
-    webRtcPlayerObj.onDataChannelMessage = function(data: Iterable<number>) {
+    webRtcPlayerObj.onDataChannelMessage = function(data) {
         let view = new Uint8Array(data);
 
         if (view[0] === ToClientMessageType.QualityControlOwnership) {
@@ -819,7 +881,7 @@ function setupWebRtcPlayer(htmlElement: HTMLElement | null, config: { autoPlayAu
                         warningElem1.id = "warning-elem-webrtc";
                         document.getElementById("webRTCSettingsHeader").appendChild(warningElem1);
                     }
-
+                    
                     if(!document.getElementById("warning-elem-encoder")) {
                         let warningElem2 = document.createElement("p");
                         warningElem2.innerText = "(Disabled by -AllowPixelStreamingCommands=false)";
@@ -876,7 +938,7 @@ function setupStats(){
     let printInterval = 5 * 60 * 1000; /*Print every 5 minutes*/
     let nextPrintDuration = printInterval;
 
-    webRtcPlayerObj.onAggregatedStats = (aggregatedStats: { timestamp: number; timestampStart: number; hasOwnProperty: (arg0: string) => any; bytesReceived: any; frameWidth: string; frameHeight: string; framesDecoded: number | bigint; packetsLost: number | bigint; framerate: number | bigint; framesDropped: number | bigint; currentRoundTripTime: number; receiveToCompositeMs: number | bigint; bitrate: number | bigint; }) => {
+    webRtcPlayerObj.onAggregatedStats = (aggregatedStats) => {
         let numberFormat = new Intl.NumberFormat(window.navigator.language, {
             maximumFractionDigits: 0
         });
@@ -899,20 +961,20 @@ function setupStats(){
         let runTimeMinutes = Math.floor(timeValues[1]);
         let runTimeHours = Math.floor([timeValues[2]]);
 
-        const receivedBytesMeasurement = 'B';
-        const receivedBytes = aggregatedStats.hasOwnProperty('bytesReceived') ? aggregatedStats.bytesReceived : 0;
+        receivedBytesMeasurement = 'B';
+        receivedBytes = aggregatedStats.hasOwnProperty('bytesReceived') ? aggregatedStats.bytesReceived : 0;
         let dataMeasurements = ['kB', 'MB', 'GB'];
         for (let index = 0; index < dataMeasurements.length; index++) {
             if (receivedBytes < 100 * 1000)
                 break;
-            const const receivedBytes = receivedBytes / 1000;
-            const receivedBytesMeasurement = dataMeasurements[index];
+            receivedBytes = receivedBytes / 1000;
+            receivedBytesMeasurement = dataMeasurements[index];
         }
 
         let qualityStatus = document.getElementById("qualityStatus");
 
         // "blinks" quality status element for 1 sec by making it transparent, speed = number of blinks
-        let blinkQualityStatus = function(speed: number) {
+        let blinkQualityStatus = function(speed) {
             let iter = speed;
             let opacity = 1; // [0..1]
             let tickId = setInterval(
@@ -984,7 +1046,7 @@ function setupStats(){
         }
     };
 
-    webRtcPlayerObj.latencyTestTimings.OnAllLatencyTimingsReady = function(timings: { BrowserReceiptTimeMs: number; TestStartTimeMs: number; UEEncodeMs: any; UECaptureToSendMs: any; UETransmissionTimeMs: number; UEReceiptTimeMs: number; FrameDisplayDeltaTimeMs: number; }) {
+    webRtcPlayerObj.latencyTestTimings.OnAllLatencyTimingsReady = function(timings) {
 
         if (!timings.BrowserReceiptTimeMs) {
             return;
@@ -1017,28 +1079,28 @@ function setupStats(){
     }
 }
 
-function onWebRtcOffer(webRTCData: any) {
+function onWebRtcOffer(webRTCData) {
     webRtcPlayerObj.receiveOffer(webRTCData);
     setupStats();
 }
 
-function onWebRtcAnswer(webRTCData: any) {
+function onWebRtcAnswer(webRTCData) {
     webRtcPlayerObj.receiveAnswer(webRTCData);
     setupStats();
 }
 
-function onWebRtcIce(iceCandidate: any) {
+function onWebRtcIce(iceCandidate) {
     if (webRtcPlayerObj){
         webRtcPlayerObj.handleCandidateFromServer(iceCandidate);
     }
 }
 
-let styleWidth: string | number;
-let styleHeight: string | number;
+let styleWidth;
+let styleHeight;
 let styleTop;
 let styleLeft;
 let styleCursor = 'default';
-let styleAdditional: string;
+let styleAdditional;
 
 const ControlSchemeType = {
     // A mouse can lock inside the WebRTC player so the user can simply move the
@@ -1068,7 +1130,7 @@ let inputOptions = {
     fakeMouseWithTouches: false
 };
 
-function resizePlayerStyleToFillWindow(playerElement: HTMLElement) {
+function resizePlayerStyleToFillWindow(playerElement) {
     let videoElement = playerElement.getElementsByTagName("VIDEO");
 
     // Fill the player display in window, keeping picture's aspect ratio.
@@ -1102,7 +1164,7 @@ function resizePlayerStyleToFillWindow(playerElement: HTMLElement) {
     }
 }
 
-function resizePlayerStyleToActualSize(playerElement: HTMLElement) {
+function resizePlayerStyleToActualSize(playerElement) {
     let videoElement = playerElement.getElementsByTagName("VIDEO");
 
     if (videoElement.length > 0) {
@@ -1118,7 +1180,7 @@ function resizePlayerStyleToActualSize(playerElement: HTMLElement) {
     }
 }
 
-function resizePlayerStyleToArbitrarySize(playerElement: HTMLElement) {
+function resizePlayerStyleToArbitrarySize(playerElement) {
     let videoElement = playerElement.getElementsByTagName("VIDEO");
     //Video is now 100% of the playerElement, so set the playerElement style
     playerElement.style = "top: 0px; left: 0px; width: " + styleWidth + "px; height: " + styleHeight + "px; cursor: " + styleCursor + "; " + styleAdditional;
@@ -1148,7 +1210,7 @@ function invalidateFreezeFrameOverlay() {
     freezeFrameOverlay.style.display = 'none';
     freezeFrame.valid = false;
     freezeFrameOverlay.classList.remove("freezeframeBackground");
-
+    
     if (webRtcPlayerObj) {
         webRtcPlayerObj.setVideoEnabled(true);
     }
@@ -1206,7 +1268,7 @@ function resizeFreezeFrameOverlay() {
     }
 }
 
-function resizePlayerStyle(event: Event) {
+function resizePlayerStyle(event) {
     let playerElement = document.getElementById('player');
 
     if (!playerElement)
@@ -1235,7 +1297,7 @@ function resizePlayerStyle(event: Event) {
     setupMouseAndFreezeFrame(playerElement)
 }
 
-function setupMouseAndFreezeFrame(playerElement: HTMLElement) {
+function setupMouseAndFreezeFrame(playerElement) {
     // Calculating and normalizing positions depends on the width and height of
     // the player.
     playerElementClientRect = playerElement.getBoundingClientRect();
@@ -1269,9 +1331,9 @@ function updateVideoStreamSize() {
 
 // Fix for bug in iOS where windowsize is not correct at instance or orientation change
 // https://github.com/dimsemenov/PhotoSwipe/issues/1315
-let _orientationChangeTimeout: string | number | NodeJS.Timeout | undefined;
+let _orientationChangeTimeout;
 
-function onOrientationChange(event: any) {
+function onOrientationChange(event) {
     clearTimeout(_orientationChangeTimeout);
     _orientationChangeTimeout = setTimeout(function() {
         resizePlayerStyle();
@@ -1332,7 +1394,7 @@ const MessageType = {
 };
 
 // A generic message has a type and a descriptor.
-function emitDescriptor(messageType: number, descriptor: { StartTime: any; }) {
+function emitDescriptor(messageType, descriptor) {
     // Convert the dscriptor object into a JSON string.
     let descriptorAsString = JSON.stringify(descriptor);
 
@@ -1354,7 +1416,7 @@ function emitDescriptor(messageType: number, descriptor: { StartTime: any; }) {
 // A UI interation will occur when the user presses a button powered by
 // JavaScript as opposed to pressing a button which is part of the pixel
 // streamed UI from the UE4 client.
-function emitUIInteraction(descriptor: any) {
+function emitUIInteraction(descriptor) {
     emitDescriptor(MessageType.UIInteraction, descriptor);
 }
 
@@ -1368,7 +1430,7 @@ function emitUIInteraction(descriptor: any) {
 // 2. A command to change the resolution to the given width and height.
 //    "{ Resolution.Width: <value>, Resolution.Height: <value> } }"
 //
-function emitCommand(descriptor: { ConsoleCommand: string; }) {
+function emitCommand(descriptor) {
     emitDescriptor(MessageType.Command, descriptor);
 }
 
@@ -1382,9 +1444,9 @@ function requestQualityControl() {
     }
 }
 
-let playerElementClientRect: { left: number; top: number; } | undefined = undefined;
-let normalizeAndQuantizeUnsigned: ((arg0: number, arg1: number) => any) | undefined = undefined;
-let normalizeAndQuantizeSigned: ((arg0: any, arg1: any) => any) | undefined = undefined;
+let playerElementClientRect = undefined;
+let normalizeAndQuantizeUnsigned = undefined;
+let normalizeAndQuantizeSigned = undefined;
 
 function setupNormalizeAndQuantize() {
     let playerElement = document.getElementById('player');
@@ -1409,7 +1471,7 @@ function setupNormalizeAndQuantize() {
             }
             let ratio = playerAspectRatio / videoAspectRatio;
             // Unsigned.
-            normalizeAndQuantizeUnsigned = (x: number, y: number) => {
+            normalizeAndQuantizeUnsigned = (x, y) => {
                 let normalizedX = x / playerElement.clientWidth;
                 let normalizedY = ratio * (y / playerElement.clientHeight - 0.5) + 0.5;
                 if (normalizedX < 0.0 || normalizedX > 1.0 || normalizedY < 0.0 || normalizedY > 1.0) {
@@ -1426,7 +1488,7 @@ function setupNormalizeAndQuantize() {
                     };
                 }
             };
-            const unquantizeAndDenormalizeUnsigned = (x: number, y: number) => {
+            unquantizeAndDenormalizeUnsigned = (x, y) => {
                 let normalizedX = x / 65536;
                 let normalizedY = (y / 65536 - 0.5) / ratio + 0.5;
                 return {
@@ -1435,7 +1497,7 @@ function setupNormalizeAndQuantize() {
                 };
             };
             // Signed.
-            normalizeAndQuantizeSigned = (x: number, y: number) => {
+            normalizeAndQuantizeSigned = (x, y) => {
                 let normalizedX = x / (0.5 * playerElement.clientWidth);
                 let normalizedY = (ratio * y) / (0.5 * playerElement.clientHeight);
                 return {
@@ -1449,7 +1511,7 @@ function setupNormalizeAndQuantize() {
             }
             let ratio = videoAspectRatio / playerAspectRatio;
             // Unsigned.
-            normalizeAndQuantizeUnsigned = (x: number, y: number) => {
+            normalizeAndQuantizeUnsigned = (x, y) => {
                 let normalizedX = ratio * (x / playerElement.clientWidth - 0.5) + 0.5;
                 let normalizedY = y / playerElement.clientHeight;
                 if (normalizedX < 0.0 || normalizedX > 1.0 || normalizedY < 0.0 || normalizedY > 1.0) {
@@ -1466,7 +1528,7 @@ function setupNormalizeAndQuantize() {
                     };
                 }
             };
-            const unquantizeAndDenormalizeUnsigned = (x: number, y: number) => {
+            unquantizeAndDenormalizeUnsigned = (x, y) => {
                 let normalizedX = (x / 65536 - 0.5) / ratio + 0.5;
                 let normalizedY = y / 65536;
                 return {
@@ -1475,7 +1537,7 @@ function setupNormalizeAndQuantize() {
                 };
             };
             // Signed.
-            normalizeAndQuantizeSigned = (x: number, y: number) => {
+            normalizeAndQuantizeSigned = (x, y) => {
                 let normalizedX = (ratio * x) / (0.5 * playerElement.clientWidth);
                 let normalizedY = y / (0.5 * playerElement.clientHeight);
                 return {
@@ -1487,7 +1549,7 @@ function setupNormalizeAndQuantize() {
     }
 }
 
-function emitMouseMove(x: number, y: number, deltaX: number, deltaY: number) {
+function emitMouseMove(x, y, deltaX, deltaY) {
     if (print_inputs) {
         console.log(`x: ${x}, y:${y}, dX: ${deltaX}, dY: ${deltaY}`);
     }
@@ -1502,7 +1564,7 @@ function emitMouseMove(x: number, y: number, deltaX: number, deltaY: number) {
     sendInputData(Data.buffer);
 }
 
-function emitMouseDown(button: number, x: number, y: number) {
+function emitMouseDown(button, x, y) {
     if (print_inputs) {
         console.log(`mouse button ${button} down at (${x}, ${y})`);
     }
@@ -1515,7 +1577,7 @@ function emitMouseDown(button: number, x: number, y: number) {
     sendInputData(Data.buffer);
 }
 
-function emitMouseUp(button: number, x: number, y: number) {
+function emitMouseUp(button, x, y) {
     if (print_inputs) {
         console.log(`mouse button ${button} up at (${x}, ${y})`);
     }
@@ -1528,7 +1590,7 @@ function emitMouseUp(button: number, x: number, y: number) {
     sendInputData(Data.buffer);
 }
 
-function emitMouseWheel(delta: number, x: number, y: number) {
+function emitMouseWheel(delta, x, y) {
     if (print_inputs) {
         console.log(`mouse wheel with delta ${delta} at (${x}, ${y})`);
     }
@@ -1560,7 +1622,7 @@ const MouseButtonsMask = {
 };
 
 // If the user has any mouse buttons pressed then release them.
-function releaseMouseButtons(buttons: number, x: number, y: number) {
+function releaseMouseButtons(buttons, x, y) {
     if (buttons & MouseButtonsMask.PrimaryButton) {
         emitMouseUp(MouseButton.MainButton, x, y);
     }
@@ -1579,7 +1641,7 @@ function releaseMouseButtons(buttons: number, x: number, y: number) {
 }
 
 // If the user has any mouse buttons pressed then press them again.
-function pressMouseButtons(buttons: number, x: number, y: number) {
+function pressMouseButtons(buttons, x, y) {
     if (buttons & MouseButtonsMask.PrimaryButton) {
         emitMouseDown(MouseButton.MainButton, x, y);
     }
@@ -1597,7 +1659,7 @@ function pressMouseButtons(buttons: number, x: number, y: number) {
     }
 }
 
-function registerInputs(playerElement: any) {
+function registerInputs(playerElement) {
     if (!playerElement)
         return;
 
@@ -1605,7 +1667,7 @@ function registerInputs(playerElement: any) {
     registerTouchEvents(playerElement);
 }
 
-function createOnScreenKeyboardHelpers(htmlElement: { appendChild: (arg0: HTMLButtonElement | HTMLInputElement) => void; }) {
+function createOnScreenKeyboardHelpers(htmlElement) {
     if (document.getElementById('hiddenInput') === null) {
         hiddenInput = document.createElement('input');
         hiddenInput.id = 'hiddenInput';
@@ -1629,7 +1691,7 @@ function createOnScreenKeyboardHelpers(htmlElement: { appendChild: (arg0: HTMLBu
     }
 }
 
-function showOnScreenKeyboard(command: { showOnScreenKeyboard: any; x: any; y: any; }) {
+function showOnScreenKeyboard(command) {
     if (command.showOnScreenKeyboard) {
         // Show the 'edit text' button.
         editTextButton.classList.remove('hiddenState');
@@ -1645,8 +1707,8 @@ function showOnScreenKeyboard(command: { showOnScreenKeyboard: any; x: any; y: a
     }
 }
 
-function registerMouseEnterAndLeaveEvents(playerElement: { onmouseenter: (e: any) => void; pressMouseButtons: (arg0: any) => void; onmouseleave: (e: any) => void; releaseMouseButtons: (arg0: any) => void; }) {
-    playerElement.onmouseenter = function(e: any) {
+function registerMouseEnterAndLeaveEvents(playerElement) {
+    playerElement.onmouseenter = function(e) {
         if (print_inputs) {
             console.log('mouse enter');
         }
@@ -1656,7 +1718,7 @@ function registerMouseEnterAndLeaveEvents(playerElement: { onmouseenter: (e: any
         playerElement.pressMouseButtons(e);
     };
 
-    playerElement.onmouseleave = function(e: any) {
+    playerElement.onmouseleave = function(e) {
         if (print_inputs) {
             console.log('mouse leave');
         }
@@ -1670,7 +1732,7 @@ function registerMouseEnterAndLeaveEvents(playerElement: { onmouseenter: (e: any
 // A locked mouse works by the user clicking in the browser player and the
 // cursor disappears and is locked. The user moves the cursor and the camera
 // moves, for example. The user presses escape to free the mouse.
-function registerLockedMouseEvents(playerElement: Element | null) {
+function registerLockedMouseEvents(playerElement) {
     let x = playerElement.width / 2;
     let y = playerElement.height / 2;
 
@@ -1705,7 +1767,7 @@ function registerLockedMouseEvents(playerElement: Element | null) {
         }
     }
 
-    function updatePosition(e: { movementX: number; movementY: number; }) {
+    function updatePosition(e) {
         x += e.movementX;
         y += e.movementY;
         if (x > styleWidth) {
@@ -1723,23 +1785,23 @@ function registerLockedMouseEvents(playerElement: Element | null) {
         emitMouseMove(x, y, e.movementX, e.movementY);
     }
 
-    playerElement.onmousedown = function(e: { button: any; }) {
+    playerElement.onmousedown = function(e) {
         emitMouseDown(e.button, x, y);
     };
 
-    playerElement.onmouseup = function(e: { button: any; }) {
+    playerElement.onmouseup = function(e) {
         emitMouseUp(e.button, x, y);
     };
 
-    playerElement.onmousewheel = function(e: { wheelDelta: any; }) {
+    playerElement.onmousewheel = function(e) {
         emitMouseWheel(e.wheelDelta, x, y);
     };
 
-    playerElement.pressMouseButtons = function(e: { buttons: any; }) {
+    playerElement.pressMouseButtons = function(e) {
         pressMouseButtons(e.buttons, x, y);
     };
 
-    playerElement.releaseMouseButtons = function(e: { buttons: any; }) {
+    playerElement.releaseMouseButtons = function(e) {
         releaseMouseButtons(e.buttons, x, y);
     };
 }
@@ -1747,21 +1809,21 @@ function registerLockedMouseEvents(playerElement: Element | null) {
 // A hovering mouse works by the user clicking the mouse button when they want
 // the cursor to have an effect over the video. Otherwise the cursor just
 // passes over the browser.
-function registerHoveringMouseEvents(playerElement: { onmousemove: (e: any) => void; onmousedown: (e: any) => void; onmouseup: (e: any) => void; oncontextmenu: (e: any) => void; onmousewheel: (e: any) => void; addEventListener: (arg0: string, arg1: (e: any) => void, arg2: boolean) => void; pressMouseButtons: (e: any) => void; releaseMouseButtons: (e: any) => void; }) {
+function registerHoveringMouseEvents(playerElement) {
     styleCursor = 'none'; // We will rely on UE4 client's software cursor.
     //styleCursor = 'default';  // Showing cursor
 
-    playerElement.onmousemove = function(e: { offsetX: any; offsetY: any; movementX: any; movementY: any; preventDefault: () => void; }) {
+    playerElement.onmousemove = function(e) {
         emitMouseMove(e.offsetX, e.offsetY, e.movementX, e.movementY);
         e.preventDefault();
     };
 
-    playerElement.onmousedown = function(e: { button: any; offsetX: any; offsetY: any; preventDefault: () => void; }) {
+    playerElement.onmousedown = function(e) {
         emitMouseDown(e.button, e.offsetX, e.offsetY);
         e.preventDefault();
     };
 
-    playerElement.onmouseup = function(e: { button: any; offsetX: any; offsetY: any; preventDefault: () => void; }) {
+    playerElement.onmouseup = function(e) {
         emitMouseUp(e.button, e.offsetX, e.offsetY);
         e.preventDefault();
     };
@@ -1771,40 +1833,40 @@ function registerHoveringMouseEvents(playerElement: { onmousemove: (e: any) => v
     // get at least one mouse up corresponding to a mouse down event. Otherwise
     // the mouse can get stuck.
     // https://github.com/facebook/react/issues/5531
-    playerElement.oncontextmenu = function(e: { button: any; offsetX: any; offsetY: any; preventDefault: () => void; }) {
+    playerElement.oncontextmenu = function(e) {
         emitMouseUp(e.button, e.offsetX, e.offsetY);
         e.preventDefault();
     };
 
     if ('onmousewheel' in playerElement) {
-        playerElement.onmousewheel = function(e: { wheelDelta: any; offsetX: any; offsetY: any; preventDefault: () => void; }) {
+        playerElement.onmousewheel = function(e) {
             emitMouseWheel(e.wheelDelta, e.offsetX, e.offsetY);
             e.preventDefault();
         };
     } else {
-        playerElement.addEventListener('DOMMouseScroll', function(e: { detail: number; offsetX: any; offsetY: any; preventDefault: () => void; }) {
+        playerElement.addEventListener('DOMMouseScroll', function(e) {
             emitMouseWheel(e.detail * -120, e.offsetX, e.offsetY);
             e.preventDefault();
         }, false);
     }
 
-    playerElement.pressMouseButtons = function(e: { buttons: any; offsetX: any; offsetY: any; }) {
+    playerElement.pressMouseButtons = function(e) {
         pressMouseButtons(e.buttons, e.offsetX, e.offsetY);
     };
 
-    playerElement.releaseMouseButtons = function(e: { buttons: any; offsetX: any; offsetY: any; }) {
+    playerElement.releaseMouseButtons = function(e) {
         releaseMouseButtons(e.buttons, e.offsetX, e.offsetY);
     };
 }
 
-function registerTouchEvents(playerElement: { offsetLeft: number; offsetTop: number; ontouchstart: { (e: any): void; (e: any): void; }; onmouseenter: (arg0: any) => void; ontouchend: { (e: any): void; (e: any): void; }; onmouseleave: (arg0: any) => void; ontouchmove: { (e: any): void; (e: any): void; }; }) {
+function registerTouchEvents(playerElement) {
 
     // We need to assign a unique identifier to each finger.
     // We do this by mapping each Touch object to the identifier.
     let fingers = [9, 8, 7, 6, 5, 4, 3, 2, 1, 0];
     let fingerIds = {};
 
-    function rememberTouch(touch: { identifier: string | number; }) {
+    function rememberTouch(touch) {
         let finger = fingers.pop();
         if (finger === undefined) {
             console.log('exhausted touch indentifiers');
@@ -1812,12 +1874,12 @@ function registerTouchEvents(playerElement: { offsetLeft: number; offsetTop: num
         fingerIds[touch.identifier] = finger;
     }
 
-    function forgetTouch(touch: { identifier: string | number; }) {
+    function forgetTouch(touch) {
         fingers.push(fingerIds[touch.identifier]);
         delete fingerIds[touch.identifier];
     }
 
-    function emitTouchData(type: number, touches: string | any[]) {
+    function emitTouchData(type, touches) {
         let data = new DataView(new ArrayBuffer(2 + 7 * touches.length));
         data.setUint8(0, type);
         data.setUint8(1, touches.length);
@@ -1841,15 +1903,15 @@ function registerTouchEvents(playerElement: { offsetLeft: number; offsetTop: num
             data.setUint8(byte, coord.inRange ? 1 : 0, true); // mark the touch as in the player or not
             byte += 1;
         }
-
+        
         sendInputData(data.buffer);
     }
 
     if (inputOptions.fakeMouseWithTouches) {
 
-        let finger: { x: any; y: any; id: any; } | undefined = undefined;
+        let finger = undefined;
 
-        playerElement.ontouchstart = function(e: { changedTouches: any[]; preventDefault: () => void; }) {
+        playerElement.ontouchstart = function(e) {
             if (finger === undefined) {
                 let firstTouch = e.changedTouches[0];
                 finger = {
@@ -1866,7 +1928,7 @@ function registerTouchEvents(playerElement: { offsetLeft: number; offsetTop: num
             e.preventDefault();
         };
 
-        playerElement.ontouchend = function(e: { changedTouches: string | any[]; preventDefault: () => void; }) {
+        playerElement.ontouchend = function(e) {
             for (let t = 0; t < e.changedTouches.length; t++) {
                 let touch = e.changedTouches[t];
                 if (touch.identifier === finger.id) {
@@ -1882,7 +1944,7 @@ function registerTouchEvents(playerElement: { offsetLeft: number; offsetTop: num
             e.preventDefault();
         };
 
-        playerElement.ontouchmove = function(e: { touches: string | any[]; preventDefault: () => void; }) {
+        playerElement.ontouchmove = function(e) {
             for (let t = 0; t < e.touches.length; t++) {
                 let touch = e.touches[t];
                 if (touch.identifier === finger.id) {
@@ -1897,7 +1959,7 @@ function registerTouchEvents(playerElement: { offsetLeft: number; offsetTop: num
             e.preventDefault();
         };
     } else {
-        playerElement.ontouchstart = function(e: { changedTouches: string | any[]; preventDefault: () => void; }) {
+        playerElement.ontouchstart = function(e) {
             // Assign a unique identifier to each touch.
             for (let t = 0; t < e.changedTouches.length; t++) {
                 rememberTouch(e.changedTouches[t]);
@@ -1910,7 +1972,7 @@ function registerTouchEvents(playerElement: { offsetLeft: number; offsetTop: num
             e.preventDefault();
         };
 
-        playerElement.ontouchend = function(e: { changedTouches: string | any[]; preventDefault: () => void; }) {
+        playerElement.ontouchend = function(e) {
             if (print_inputs) {
                 console.log('touch end');
             }
@@ -1923,7 +1985,7 @@ function registerTouchEvents(playerElement: { offsetLeft: number; offsetTop: num
             e.preventDefault();
         };
 
-        playerElement.ontouchmove = function(e: { touches: any; preventDefault: () => void; }) {
+        playerElement.ontouchmove = function(e) {
             if (print_inputs) {
                 console.log('touch move');
             }
@@ -1934,7 +1996,7 @@ function registerTouchEvents(playerElement: { offsetLeft: number; offsetTop: num
 }
 
 // Browser keys do not have a charCode so we only need to test keyCode.
-function isKeyCodeBrowserKey(keyCode: number) {
+function isKeyCodeBrowserKey(keyCode) {
     // Function keys or tab key.
     return keyCode >= 112 && keyCode <= 123 || keyCode === 9;
 }
@@ -1953,7 +2015,7 @@ const SpecialKeyCodes = {
 
 // We want to be able to differentiate between left and right versions of some
 // keys.
-function getKeyCode(e: KeyboardEvent) {
+function getKeyCode(e) {
     if (e.keyCode === SpecialKeyCodes.Shift && e.code === 'ShiftRight') return SpecialKeyCodes.RightShift;
     else if (e.keyCode === SpecialKeyCodes.Control && e.code === 'ControlRight') return SpecialKeyCodes.RightControl;
     else if (e.keyCode === SpecialKeyCodes.Alt && e.code === 'AltRight') return SpecialKeyCodes.RightAlt;
@@ -2002,11 +2064,7 @@ function registerKeyboardEvents() {
 
 function onExpandOverlay_Click( /* e */ ) {
     let overlay = document.getElementById('overlay');
-    if(overlay){
     overlay.classList.toggle("overlay-shown");
-    } else {
-        console.log('overlay is undefined')
-    }
 }
 
 function start() {
@@ -2033,7 +2091,7 @@ function start() {
 }
 
 function connect() {
-
+    "use strict";
 
     window.WebSocket = window.WebSocket || window.MozWebSocket;
 
@@ -2089,7 +2147,7 @@ function connect() {
 }
 
 // Config data received from WebRTC sender via the Cirrus web server
-function onConfig(config: any) {
+function onConfig(config) {
     let playerDiv = document.getElementById('player');
     let playerElement = setupWebRtcPlayer(playerDiv, config);
     resizePlayerStyle();
@@ -2108,7 +2166,7 @@ function onConfig(config: any) {
     }
 }
 
-export function load() {
+function load() {
     setupHtmlEvents();
     setupFreezeFrameOverlay();
     registerKeyboardEvents();

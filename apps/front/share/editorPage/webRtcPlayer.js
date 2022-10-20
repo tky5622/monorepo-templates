@@ -1,26 +1,8 @@
-/* eslint-disable */
 // Copyright Epic Games, Inc. All Rights Reserved.
-type Config = {startVideoMuted?:boolean, peerConnectionOptions?:{}, autoPlayAudio?: boolean; }
-type Stat = {
-    bytesReceivedStart: any;
-    framesDecodedStart: any;
-    timestampStart: any;
-    bitrate: number;
-    lowBitrate: any;
-    highBitrate: any;
-    avgBitrate: number;
-    framerate: number;
-    lowFramerate: any;
-    highFramerate: any;
-    avgframerate: number;
-    framesDroppedPercentage: number;
-    frameHeightStart: any;
-    frameWidthStart: any;
-    receiveToCompositeMs: any; type: string; isRemote: any; mediaType: string; id: string; timestamp: any; bytesReceived: any; framesDecoded: any; packetsLost: any; trackIdentifier: string; kind: string; framesDropped: number; framesReceived: number; frameHeight: any; frameWidth: any; hasOwnProperty: (arg0: string) => any; currentRoundTripTime: number;
-}
-export default function(parOptions: Config){
-    parOptions = typeof parOptions !== 'undefined' ? parOptions : {};
 
+function webRtcPlayer(parOptions) {
+    parOptions = typeof parOptions !== 'undefined' ? parOptions : {};
+    
     var self = this;
     const urlParams = new URLSearchParams(window.location.search);
 
@@ -93,12 +75,12 @@ export default function(parOptions: Config){
 
     // Prefer SFU or P2P connection
     this.preferSFU = urlParams.has('preferSFU');
-    console.log(this.preferSFU ?
+    console.log(this.preferSFU ? 
         "The browser will signal it would prefer an SFU connection. Remove ?preferSFU from the url to signal for P2P usage." :
         "The browser will signal for a P2P connection. Pass ?preferSFU in the url to signal for SFU usage.");
 
     // Latency tester
-    this.latencyTestTimings =
+    this.latencyTestTimings = 
     {
         TestStartTimeMs: null,
         UEReceiptTimeMs: null,
@@ -117,7 +99,7 @@ export default function(parOptions: Config){
             this.BrowserReceiptTimeMs = null;
             this.FrameDisplayDeltaTimeMs = null;
         },
-        SetUETimings: function(UETimings: { ReceiptTimeMs: any; EncodeMs: any; CaptureToSendMs: any; TransmissionTimeMs: any; })
+        SetUETimings: function(UETimings)
         {
             this.UEReceiptTimeMs = UETimings.ReceiptTimeMs;
             this.UEEncodeMs = UETimings.EncodeMs,
@@ -126,7 +108,7 @@ export default function(parOptions: Config){
             this.BrowserReceiptTimeMs = Date.now();
             this.OnAllLatencyTimingsReady(this);
         },
-        SetFrameDisplayDeltaTime: function(DeltaTimeMs: number)
+        SetFrameDisplayDeltaTime: function(DeltaTimeMs)
         {
             if(this.FrameDisplayDeltaTimeMs == null)
             {
@@ -134,7 +116,7 @@ export default function(parOptions: Config){
                 this.OnAllLatencyTimingsReady(this);
             }
         },
-        OnAllLatencyTimingsReady: function(Timings: any){}
+        OnAllLatencyTimingsReady: function(Timings){}
     }
 
     //**********************
@@ -148,39 +130,35 @@ export default function(parOptions: Config){
         video.id = "streamingVideo";
         video.playsInline = true;
         video.disablePictureInPicture = true;
-        video.muted = self.startVideoMuted;
-
-        console.log("streamingVideo")
-
+        video.muted = self.startVideoMuted;;
+        
         video.addEventListener('loadedmetadata', function(e){
-            console.log("self.onVideoInitialised", self.onVideoInitialised)
-
             if(self.onVideoInitialised){
                 self.onVideoInitialised();
             }
         }, true);
-
+        
         // Check if request video frame callback is supported
         if ('requestVideoFrameCallback' in HTMLVideoElement.prototype) {
-            // The API is supported!
-            let onVideoFrameReady: VideoFrameRequestCallback;
-            onVideoFrameReady = (now: any, metadata: { receiveTime: number; expectedDisplayTime: any; presentationTime: number; }) => {
-
+            // The API is supported! 
+            
+            const onVideoFrameReady = (now, metadata) => {
+                
                 if(metadata.receiveTime && metadata.expectedDisplayTime)
                 {
                     const receiveToCompositeMs = metadata.presentationTime - metadata.receiveTime;
                     self.aggregatedStats.receiveToCompositeMs = receiveToCompositeMs;
                 }
-
-
+                
+              
                 // Re-register the callback to be notified about the next frame.
                 video.requestVideoFrameCallback(onVideoFrameReady);
             };
-
+            
             // Initially register the callback to be notified about the first frame.
             video.requestVideoFrameCallback(onVideoFrameReady);
         }
-
+        
         return video;
     }
 
@@ -194,41 +172,25 @@ export default function(parOptions: Config){
     this.video = this.createWebRtcVideo();
     this.audio = this.createWebRtcAudio();
     this.availableVideoStreams = new Map();
-    let onsignalingstatechange: (state: any) => void;
-    let oniceconnectionstatechange: (state: any) => void;
-    let onicegatheringstatechange: (state: any) => void;
-    let handleOnTrack: (e: any) => void;
-    let handleOnAudioTrack: (audioMediaStream: any) => void;
-    let onDataChannel: (dataChannelEvent: any) => void;
-    let createDataChannel: (arg0: any, arg1: string, arg2: any) => any;
-    let setupDataChannelCallbacks: (datachannel: any) => any;
-    let onicecandidate: (e: any) => void
-    let handleCreateOffer: (pc: any) => void
-    let mungeSDPOffer: (offer: any) => void
-    let setupPeerConnection: (pc: any) => void
-    let generateAggregatedStatsFunction: () => any
-    let setupTransceiversAsync: (arg0: any) => Promise<any>
 
-
-
-    onsignalingstatechange = function(state: { srcElement: { signalingState: any; }; }) {
+    onsignalingstatechange = function(state) {
         console.info('Signaling state change. |', state.srcElement.signalingState, "|")
     };
 
-    oniceconnectionstatechange = function(state: { srcElement: { iceConnectionState: any; }; }) {
+    oniceconnectionstatechange = function(state) {
         console.info('Browser ICE connection |', state.srcElement.iceConnectionState, '|')
     };
 
-    onicegatheringstatechange = function(state: { srcElement: { iceGatheringState: any; }; }) {
+    onicegatheringstatechange = function(state) {
         console.info('Browser ICE gathering |', state.srcElement.iceGatheringState, '|')
     };
 
-    handleOnTrack = function(e: { track: { kind: string; id: string; readyState: string; onunmute: () => void; }; streams: any[]; }) {
+    handleOnTrack = function(e) {
         if (e.track)
         {
-            console.log('Got track. | Kind=' + e.track.kind + ' | Id=' + e.track.id + ' | readyState=' + e.track.readyState + ' |');
+            console.log('Got track. | Kind=' + e.track.kind + ' | Id=' + e.track.id + ' | readyState=' + e.track.readyState + ' |'); 
         }
-
+        
         if(e.track.kind == "audio")
         {
             handleOnAudioTrack(e.streams[0]);
@@ -252,7 +214,7 @@ export default function(parOptions: Config){
         }
     };
 
-    handleOnAudioTrack = function(audioMediaStream: any)
+    handleOnAudioTrack = function(audioMediaStream)
     {
         // do nothing the video has the same media stream as the audio track we have here (they are linked)
         if(self.video.srcObject == audioMediaStream)
@@ -267,14 +229,14 @@ export default function(parOptions: Config){
 
     }
 
-    onDataChannel = function(dataChannelEvent: { channel: any; }){
+    onDataChannel = function(dataChannelEvent){
         // This is the primary data channel code path when we are "receiving"
         console.log("Data channel created for us by browser as we are a receiving peer.");
         self.dcClient = dataChannelEvent.channel;
         setupDataChannelCallbacks(self.dcClient);
     }
 
-    createDataChannel = function(pc: { createDataChannel: (arg0: any, arg1: any) => any; }, label: any, options: any){
+    createDataChannel = function(pc, label, options){
         // This is the primary data channel code path when we are "offering"
         let datachannel = pc.createDataChannel(label, options);
         console.log(`Created datachannel (${label})`);
@@ -282,40 +244,40 @@ export default function(parOptions: Config){
         return datachannel;
     }
 
-    setupDataChannelCallbacks = function(datachannel: { binaryType: string; onopen: (e: any) => void; onclose: (e: any) => void; onmessage: (e: any) => void; onerror: (e: any) => void; }) {
+    setupDataChannelCallbacks = function(datachannel) {
         try {
             // Inform browser we would like binary data as an ArrayBuffer (FF chooses Blob by default!)
             datachannel.binaryType = "arraybuffer";
 
-            datachannel.onopen = function (e: any) {
+            datachannel.onopen = function (e) {
               console.log("Data channel connected");
               if(self.onDataChannelConnected){
                 self.onDataChannelConnected();
               }
             }
 
-            datachannel.onclose = function (e: any) {
+            datachannel.onclose = function (e) {
                 console.log("Data channel connected", e);
             }
 
-            datachannel.onmessage = function (e: { data: any; }) {
+            datachannel.onmessage = function (e) {
                 if (self.onDataChannelMessage){
                     self.onDataChannelMessage(e.data);
                 }
             }
 
-            datachannel.onerror = function (e: any) {
+            datachannel.onerror = function (e) {
                 console.error("Data channel error", e);
             }
 
             return datachannel;
-        } catch (e) {
+        } catch (e) { 
             console.warn('No data channel', e);
             return null;
         }
     }
 
-    onicecandidate = function (e: { candidate: any; }) {
+    onicecandidate = function (e) {
         let candidate = e.candidate;
         if (candidate && candidate.candidate) {
             console.log("%c[Browser ICE candidate]", "background: violet; color: black", "| Type=", candidate.type, "| Protocol=", candidate.protocol, "| Address=", candidate.address, "| Port=", candidate.port, "|");
@@ -323,8 +285,8 @@ export default function(parOptions: Config){
         }
     };
 
-    handleCreateOffer = function (pc: { createOffer: (arg0: any) => Promise<any>; setLocalDescription: (arg0: any) => void; }) {
-        pc.createOffer(self.sdpConstraints).then(function (offer: any) {
+    handleCreateOffer = function (pc) {
+        pc.createOffer(self.sdpConstraints).then(function (offer) {
 
             // Munging is where we modifying the sdp string to set parameters that are not exposed to the browser's WebRTC API
             mungeSDPOffer(offer);
@@ -338,7 +300,7 @@ export default function(parOptions: Config){
         function () { console.warn("Couldn't create offer") });
     }
 
-    mungeSDPOffer = function (offer: { sdp: string; }) {
+    mungeSDPOffer = function (offer) {
 
         let audioSDP = '';
 
@@ -359,8 +321,8 @@ export default function(parOptions: Config){
         // We use the line 'useinbandfec=1' (which Opus uses) to set our Opus specific audio parameters.
         offer.sdp = offer.sdp.replace('useinbandfec=1', audioSDP);
     }
-
-    setupPeerConnection = function (pc: { onsignalingstatechange: any; oniceconnectionstatechange: any; onicegatheringstatechange: any; ontrack: any; onicecandidate: any; ondatachannel: any; }) {
+    
+    setupPeerConnection = function (pc) {
         //Setup peerConnection events
         pc.onsignalingstatechange = onsignalingstatechange;
         pc.oniceconnectionstatechange = oniceconnectionstatechange;
@@ -375,15 +337,15 @@ export default function(parOptions: Config){
         if(!self.aggregatedStats)
             self.aggregatedStats = {};
 
-        return function(stats: Stat[]){
+        return function(stats){
             //console.log('Printing Stats');
 
-            let newStat = {} as Stat;
-
-            stats.forEach((stat: Stat) => {
+            let newStat = {};
+            
+            stats.forEach(stat => {
 //                    console.log(JSON.stringify(stat, undefined, 4));
-                if (stat.type == 'inbound-rtp'
-                    && !stat.isRemote
+                if (stat.type == 'inbound-rtp' 
+                    && !stat.isRemote 
                     && (stat.mediaType == 'video' || stat.id.toLowerCase().includes('video'))) {
 
                     newStat.timestamp = stat.timestamp;
@@ -440,13 +402,13 @@ export default function(parOptions: Config){
                 }
             });
 
-
+            
             if(self.aggregatedStats.receiveToCompositeMs)
             {
                 newStat.receiveToCompositeMs = self.aggregatedStats.receiveToCompositeMs;
                 self.latencyTestTimings.SetFrameDisplayDeltaTime(self.aggregatedStats.receiveToCompositeMs);
             }
-
+            
             self.aggregatedStats = newStat;
 
             if(self.onAggregatedStats)
@@ -454,8 +416,8 @@ export default function(parOptions: Config){
         }
     };
 
-    setupTransceiversAsync = async function(pc: { getTransceivers: () => { (): any; new(): any; length: number; }; addTransceiver: (arg0: string | MediaStreamTrack, arg1: { direction: string; }) => void; }){
-
+    setupTransceiversAsync = async function(pc){
+        
         let hasTransceivers = pc.getTransceivers().length > 0;
 
         // Setup a transceiver for getting UE video
@@ -468,7 +430,7 @@ export default function(parOptions: Config){
         }
         else
         {
-            let audioSendOptions = self.useMic ?
+            let audioSendOptions = self.useMic ? 
             {
                 autoGainControl: false,
                 channelCount: 1,
@@ -519,11 +481,11 @@ export default function(parOptions: Config){
     //Public functions
     //**********************
 
-    this.setVideoEnabled = function(enabled: any) {
-        self.video.srcObject.getTracks().forEach((track: { enabled: any; }) => track.enabled = enabled);
+    this.setVideoEnabled = function(enabled) {
+        self.video.srcObject.getTracks().forEach(track => track.enabled = enabled);
     }
 
-    this.startLatencyTest = function(onTestStarted: (arg0: any) => void) {
+    this.startLatencyTest = function(onTestStarted) {
         // Can't start latency test without a video element
         if(!self.video)
         {
@@ -532,11 +494,11 @@ export default function(parOptions: Config){
 
         self.latencyTestTimings.Reset();
         self.latencyTestTimings.TestStartTimeMs = Date.now();
-        onTestStarted(self.latencyTestTimings.TestStartTimeMs);
+        onTestStarted(self.latencyTestTimings.TestStartTimeMs);            
     }
 
     //This is called when revceiving new ice candidates individually instead of part of the offer
-    this.handleCandidateFromServer = function(iceCandidate: RTCIceCandidateInit | undefined) {
+    this.handleCandidateFromServer = function(iceCandidate) {
         let candidate = new RTCIceCandidate(iceCandidate);
 
         console.log("%c[Unreal ICE candidate]", "background: pink; color: black" ,"| Type=", candidate.type, "| Protocol=", candidate.protocol, "| Address=", candidate.address, "| Port=", candidate.port, "|");
@@ -545,13 +507,13 @@ export default function(parOptions: Config){
         if(self.forceTURN)
         {
             // check if no relay address is found, if so, we are assuming it means no TURN server
-            if(candidate.candidate.indexOf("relay") < 0) {
+            if(candidate.candidate.indexOf("relay") < 0) { 
                 console.warn("Dropping candidate because it was not TURN relay.", "| Type=", candidate.type, "| Protocol=", candidate.protocol, "| Address=", candidate.address, "| Port=", candidate.port, "|")
                 return;
             }
         }
 
-        self.pcClient.addIceCandidate(candidate).catch(function(e: any){
+        self.pcClient.addIceCandidate(candidate).catch(function(e){
             console.error("Failed to add ICE candidate", e);
         });
     };
@@ -571,11 +533,11 @@ export default function(parOptions: Config){
             self.dcClient = createDataChannel(self.pcClient, 'cirrus', self.dataChannelOptions);
             handleCreateOffer(self.pcClient);
         });
-
+        
     };
 
     //Called externaly when an offer is received from the server
-    this.receiveOffer = function(offer: RTCSessionDescriptionInit) {
+    this.receiveOffer = function(offer) {
         var offerDesc = new RTCSessionDescription(offer);
 
         if (!self.pcClient){
@@ -585,11 +547,11 @@ export default function(parOptions: Config){
 
             // Put things here that happen post transceiver setup
             self.pcClient.setRemoteDescription(offerDesc)
-            .then(() =>
+            .then(() => 
             {
                 setupTransceiversAsync(self.pcClient).finally(function(){
                 self.pcClient.createAnswer()
-                .then((answer: any) => {
+                .then(answer => {
                     mungeSDPOffer(answer);
                     return self.pcClient.setLocalDescription(answer);
                 })
@@ -605,14 +567,14 @@ export default function(parOptions: Config){
                         receiver.playoutDelayHint = 0;
                     }
                 })
-                .catch((error: any) => console.error("createAnswer() failed:", error));
+                .catch((error) => console.error("createAnswer() failed:", error));
                 });
             });
         }
     };
 
     //Called externaly when an answer is received from the server
-    this.receiveAnswer = function(answer: RTCSessionDescriptionInit) {
+    this.receiveAnswer = function(answer) {
         var answerDesc = new RTCSessionDescription(answer);
         self.pcClient.setRemoteDescription(answerDesc);
 
@@ -634,22 +596,22 @@ export default function(parOptions: Config){
     }
 
     //Sends data across the datachannel
-    this.send = function(data: any){
+    this.send = function(data){
         if(self.dcClient && self.dcClient.readyState == 'open'){
             //console.log('Sending data on dataconnection', self.dcClient)
             self.dcClient.send(data);
         }
     };
 
-    this.getStats = function(onStats: (arg0: any) => void){
+    this.getStats = function(onStats){
         if(self.pcClient && onStats){
-            self.pcClient.getStats(null).then((stats: any) => {
-                onStats(stats);
+            self.pcClient.getStats(null).then((stats) => { 
+                onStats(stats); 
             });
         }
     }
 
-    this.aggregateStats = function(checkInterval: number | undefined){
+    this.aggregateStats = function(checkInterval){
         let calcAggregatedStats = generateAggregatedStatsFunction();
         let printAggregatedStats = () => { self.getStats(calcAggregatedStats); }
         self.aggregateStatsIntervalId = setInterval(printAggregatedStats, checkInterval);

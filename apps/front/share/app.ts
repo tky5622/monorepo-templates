@@ -1,23 +1,13 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // Copyright Epic Games, Inc. All Rights Reserved.
-// @ts-nocheck
 /* eslint-disable */
-
+// let WebSocket = require('ws');
 import webRtcPlayer from './webRtcPlayer';
 
 
-// Window events for a gamepad connecting
-const haveEvents = 'GamepadEvent' in window;
-const haveWebkitEvents = 'WebKitGamepadEvent' in window;
-const controllers = {};
-const rAF = window.mozRequestAnimationFrame ||
-    window.webkitRequestAnimationFrame ||
-    window.requestAnimationFrame;
+
 const kbEvent = document.createEvent("KeyboardEvent");
-const initMethod = typeof kbEvent.initKeyboardEvent !== 'undefined' ? "initKeyboardEvent" : "initKeyEvent";
-
-
-let webRtcPlayerObj: { availableVideoStreams: { get: (arg0: any) => any; }; video: { srcObject: MediaStream; play: () => Promise<any>; }; startLatencyTest: (arg0: (StartTimeMs: any) => void) => void; audio: { srcObject: any; play: () => Promise<any>; stop: () => void; }; createOffer: () => void; send: (arg0: any) => void; onWebRtcOffer: (offer: any) => void; onWebRtcCandidate: (candidate: any) => void; onWebRtcAnswer: (answer: any) => void; onVideoInitialised: () => void; onDataChannelConnected: () => void; setVideoEnabled: (arg0: boolean) => void; onNewVideoTrack: (streams: any) => void; onDataChannelMessage: (data: any) => void; latencyTestTimings: { SetUETimings: (arg0: any) => void; OnAllLatencyTimingsReady: (timings: any) => void; }; aggregateStats: (arg0: number) => void; onAggregatedStats: (aggregatedStats: any) => void; receiveOffer: (arg0: any) => void; receiveAnswer: (arg0: any) => void; handleCandidateFromServer: (arg0: any) => void; close: () => void; } | null | undefined = null;
+let webRtcPlayerObj = null;
 const print_stats = false;
 const print_inputs = false;
 const connect_on_load = false;
@@ -102,131 +92,48 @@ script.src = 'https://code.jquery.com/jquery-3.4.1.min.js';
 script.type = 'text/javascript';
 document.getElementsByTagName('head')[0].appendChild(script);
 
-function updateStatus() {
-    // scanGamepads();
-    // Iterate over multiple controllers in the case the mutiple gamepads are connected
-    for (const j in controllers) {
-        const controller = controllers[j];
-        const currentState = controller.currentState;
-        const prevState = controller.prevState;
-        // Iterate over buttons
-        for (let i = 0; i < currentState.buttons.length; i++) {
-            const currButton = currentState.buttons[i];
-            const prevButton = prevState.buttons[i];
-            // Button 6 is actually the left trigger, send it to UE as an analog axis
-            // Button 7 is actually the right trigger, send it to UE as an analog axis
-            // The rest are normal buttons. Treat as such
-            if (currButton.pressed && !prevButton.pressed) {
-                // New press
-                if (i == 6) {
-                    emitControllerAxisMove(j, 5, currButton.value);
-                } else if (i == 7) {
-                    emitControllerAxisMove(j, 6, currButton.value);
-                } else {
-                    emitControllerButtonPressed(j, i, 0);
-                }
-            } else if (!currButton.pressed && prevButton.pressed) {
-                // release
-                if (i == 6) {
-                    emitControllerAxisMove(j, 5, 0);
-                } else if (i == 7) {
-                    emitControllerAxisMove(j, 6, 0);
-                } else {
-                    emitControllerButtonReleased(j, i);
-                }
-            } else if (currButton.pressed && prevButton.pressed) {
-                // repeat press / hold
-                if (i == 6) {
-                    emitControllerAxisMove(j, 5, currButton.value);
-                } else if (i == 7) {
-                    emitControllerAxisMove(j, 6, currButton.value);
-                } else {
-                    emitControllerButtonPressed(j, i, 1);
-                }
-            }
-            // Last case is button isn't currently pressed and wasn't pressed before. This doesn't need an else block
-        }
-        // Iterate over gamepad axes
-        for (let i = 0; i < currentState.axes.length; i += 2) {
-            const x = parseFloat(currentState.axes[i].toFixed(4));
-            // https://w3c.github.io/gamepad/#remapping Gamepad broweser side standard mapping has positive down, negative up. This is downright disgusting. So we fix it.
-            const y = -parseFloat(currentState.axes[i + 1].toFixed(4));
-            if (i === 0) {
-                // left stick
-                // axis 1 = left horizontal
-                emitControllerAxisMove(j, 1, x);
-                // axis 2 = left vertical
-                emitControllerAxisMove(j, 2, y);
-            } else if (i === 2) {
-                // right stick
-                // axis 3 = right horizontal
-                emitControllerAxisMove(j, 3, x);
-                // axis 4 = right vertical
-                emitControllerAxisMove(j, 4, y);
-            }
-        }
-        controllers[j].prevState = currentState;
-    }
-    rAF(updateStatus);
-}
+// function updateStatus() {
+//     rAF(updateStatus);
+// }
 
-function emitControllerButtonPressed(controllerIndex: any, buttonIndex: number, isRepeat: number) {
-    const Data = new DataView(new ArrayBuffer(4));
-    Data.setUint8(0, MessageType.GamepadButtonPressed);
-    Data.setUint8(1, controllerIndex);
-    Data.setUint8(2, buttonIndex);
-    Data.setUint8(3, isRepeat);
-}
+// function emitControllerButtonPressed(controllerIndex: any, buttonIndex: number, isRepeat: number) {
+// }
 
-function emitControllerButtonReleased(controllerIndex: any, buttonIndex: number) {
-    const Data = new DataView(new ArrayBuffer(3));
-    Data.setUint8(0, MessageType.GamepadButtonReleased);
-    Data.setUint8(1, controllerIndex);
-    Data.setUint8(2, buttonIndex);
-}
+// function emitControllerButtonReleased(controllerIndex: any, buttonIndex: number) {
+// }
 
-function emitControllerAxisMove(controllerIndex: any, axisIndex: number, analogValue: number) {
-    const Data = new DataView(new ArrayBuffer(11));
-    Data.setUint8(0, MessageType.GamepadAnalog);
-    Data.setUint8(1, controllerIndex);
-    Data.setUint8(2, axisIndex);
-    Data.setFloat64(3, analogValue, true);
-    sendInputData(Data.buffer);
-}
+// function emitControllerAxisMove(controllerIndex: any, axisIndex: number, analogValue: number) {
+//     sendInputData(Data.buffer);
+// }
 
-function gamepadConnectHandler(e: { gamepad: any; }) {
-    console.log("Gamepad connect handler");
-    const gamepad = e.gamepad;
-    controllers[gamepad.index] = {};
-    controllers[gamepad.index].currentState = gamepad;
-    controllers[gamepad.index].prevState = gamepad;
-    console.log("gamepad: " + gamepad.id + " connected");
-    rAF(updateStatus);
-}
+// function gamepadConnectHandler(e: { gamepad: any; }) {
+//     rAF(updateStatus);
+// }
 
-function gamepadDisconnectHandler(e: { gamepad: { id: string; index: string | number; }; }) {
-    console.log("Gamepad disconnect handler");
-    console.log("gamepad: " + e.gamepad.id + " disconnected");
-    delete controllers[e.gamepad.index];
-}
+// function gamepadDisconnectHandler(e: { gamepad: { id: string; index: string | number; }; }) {
+// }
 
 function setupHtmlEvents() {
     //Window events
     window.addEventListener('resize', resizePlayerStyle, true);
     window.addEventListener('orientationchange', onOrientationChange);
 
-    //Gamepad events
-    if (haveEvents) {
-        window.addEventListener("gamepadconnected", gamepadConnectHandler);
-        window.addEventListener("gamepaddisconnected", gamepadDisconnectHandler);
-    } else if (haveWebkitEvents) {
-        window.addEventListener("webkitgamepadconnected", gamepadConnectHandler);
-        window.addEventListener("webkitgamepaddisconnected", gamepadDisconnectHandler);
-    }
+    // //Gamepad events
+    // if (haveEvents) {
+    //     window.addEventListener("gamepadconnected", gamepadConnectHandler);
+    //     window.addEventListener("gamepaddisconnected", gamepadDisconnectHandler);
+    // } else if (haveWebkitEvents) {
+    //     window.addEventListener("webkitgamepadconnected", gamepadConnectHandler);
+    //     window.addEventListener("webkitgamepaddisconnected", gamepadDisconnectHandler);
+    // }
 
     //HTML elements controls
     const overlayButton = document.getElementById('overlayButton');
-    overlayButton.addEventListener('click', onExpandOverlay_Click);
+    if(overlayButton){
+        overlayButton.addEventListener('click', onExpandOverlay_Click);
+    } else {
+        console.log(overlayButton, 'overlayButton is undedfined')
+    }
 
     const resizeCheckBox = document.getElementById('enlarge-display-to-fill-window-tgl');
     if (resizeCheckBox !== null) {
@@ -309,11 +216,16 @@ function setupHtmlEvents() {
     const trackSelector = document.getElementById('track-select');
     if (streamSelector) {
         streamSelector.onchange = function(event) {
+            if(webRtcPlayerObj){
             const stream = webRtcPlayerObj.availableVideoStreams.get(streamSelector.value);
             webRtcPlayerObj.video.srcObject = stream;
             streamTrackSource = stream;
             webRtcPlayerObj.video.play();
+            } else {
+             console.log('webRtcPlayerObj is undefined',webRtcPlayerObj)
+            }
             updateTrackList();
+
         }
 
         if (trackSelector) {
@@ -462,11 +374,17 @@ function showTextOverlay(text: string) {
 }
 
 function playStream() {
+    console.log('play storm ;;;;;;')
+    console.log(webRtcPlayerObj, webRtcPlayerObj.video, webRtcPlayerObj && webRtcPlayerObj.video, 1)
     if(webRtcPlayerObj && webRtcPlayerObj.video) {
+        console.log(webRtcPlayerObj.audio.srcObject, autoPlayAudio, 2)
         if(webRtcPlayerObj.audio.srcObject && autoPlayAudio) {
+            console.log(webRtcPlayerObj.audio.play(), 'webRtcPlayerObj', 3)
             // Video and Audio are seperate tracks
             webRtcPlayerObj.audio.play().then(() => {
-                playVideo();
+                console.log('simple playvideo2222')
+               playVideo();
+               console.log('play async video')
             }).catch((onRejectedReason: any) => {
                 console.error(onRejectedReason);
                 console.log("Browser does not support autoplaying audio without interaction - to resolve this we are going to show the play button overlay.")
@@ -474,6 +392,7 @@ function playStream() {
             });
         } else {
             // Video and audio are combined in the video element
+            console.log('simple playvideo')
             playVideo();
         }
 
@@ -487,14 +406,20 @@ function playStream() {
 }
 
 function playVideo() {
+    console.log("Play Videooooooooo we are going to show the play button overlay.")
+    console.log(webRtcPlayerObj.video.play())
     webRtcPlayerObj.video.play().catch((onRejectedReason: any) => {
         if(webRtcPlayerObj.audio.srcObject) {
             webRtcPlayerObj.audio.stop();
+            console.log("Stoppppppppppppp")
         }
         console.error(onRejectedReason);
         console.log("Browser does not support autoplaying video without interaction - to resolve this we are going to show the play button overlay.")
         showPlayOverlay();
     });
+    webRtcPlayerObj.video.play()
+    console.log(webRtcPlayerObj.video.srcObject, webRtcPlayerObj.video)
+    console.log('finish')
 }
 
 function showPlayOverlay() {
@@ -502,6 +427,7 @@ function showPlayOverlay() {
     img.id = 'playButton';
     img.src = '/images/Play.png';
     img.alt = 'Start Streaming';
+    console.log('showPlayOvereeeeeeeeeeeeeeeeeeeeeelay', playStream())
     setOverlay('clickableState', img, (event: any) => {
         playStream();
     });
@@ -616,6 +542,7 @@ let VideoEncoderQP = "N/A";
 
 function setupWebRtcPlayer(htmlElement: HTMLElement | null, config: { autoPlayAudio: boolean; }) {
     webRtcPlayerObj = new webRtcPlayer(config);
+    console.log(webRtcPlayerObj, 'webRtcPlayerObj clearly', config)
     autoPlayAudio = typeof config.autoPlayAudio !== 'undefined' ? config.autoPlayAudio : true;
     htmlElement.appendChild(webRtcPlayerObj.video);
     htmlElement.appendChild(webRtcPlayerObj.audio);
@@ -647,7 +574,9 @@ function setupWebRtcPlayer(htmlElement: HTMLElement | null, config: { autoPlayAu
     };
 
     webRtcPlayerObj.onVideoInitialised = function() {
+        console.log("onVideoInitialised", ws ,ws?.readyState, WS_OPEN_STATE)
         if (ws && ws.readyState === WS_OPEN_STATE) {
+            console.log('shouldShowPlayOverlay', shouldShowPlayOverlay)
             if (shouldShowPlayOverlay) {
                 showPlayOverlay();
                 resizePlayerStyle();
@@ -667,8 +596,9 @@ function setupWebRtcPlayer(htmlElement: HTMLElement | null, config: { autoPlayAu
     };
 
     function showFreezeFrame() {
+        console.log('showFreezeFrame', 'read to show playt overlat')
         const base64 = btoa(freezeFrame.jpeg.reduce((data: string, byte: number) => data + String.fromCharCode(byte), ''));
-        const freezeFrameImage = document.getElementById("freezeFrameOverlay").childNodes[0];
+        let freezeFrameImage = document.getElementById("freezeFrameOverlay").childNodes[0];
         freezeFrameImage.src = 'data:image/jpeg;base64,' + base64;
         freezeFrameImage.onload = function() {
             freezeFrame.height = freezeFrameImage.naturalHeight;
@@ -1202,7 +1132,7 @@ function setupFreezeFrameOverlay() {
     freezeFrameOverlay.style.position = 'absolute';
     freezeFrameOverlay.style.zIndex = '20';
 
-    const freezeFrameImage = document.createElement('img');
+    let freezeFrameImage = document.createElement('img');
     freezeFrameImage.style.position = 'absolute';
     freezeFrameOverlay.appendChild(freezeFrameImage);
 }
@@ -1263,7 +1193,7 @@ function resizeFreezeFrameOverlay() {
                 displayLeft = Math.floor((playerElement.offsetWidth - displayWidth) * 0.5);
             }
         }
-        const freezeFrameImage = document.getElementById("freezeFrameOverlay").childNodes[0];
+        let freezeFrameImage = document.getElementById("freezeFrameOverlay").childNodes[0];
         freezeFrameOverlay.style.width = playerElement.offsetWidth + 'px';
         freezeFrameOverlay.style.height = playerElement.offsetHeight + 'px';
         freezeFrameOverlay.style.left = 0 + 'px';
@@ -1276,7 +1206,7 @@ function resizeFreezeFrameOverlay() {
     }
 }
 
-function resizePlayerStyle(event: undefined) {
+function resizePlayerStyle(event?: Event) {
     const playerElement = document.getElementById('player');
 
     if (!playerElement)
@@ -2114,7 +2044,7 @@ function connect() {
     console.log(ws, 'console.log ws')
 
     ws.onmessage = function(event) {
-        const msg = JSON.parse(event.data);
+        const msg = JSON.parse(event.data,'ferererfr');
         if (msg.type === 'config') {
             console.log("%c[Inbound SS (config)]", "background: lightblue; color: black", msg);
             onConfig(msg);
