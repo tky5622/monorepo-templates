@@ -1,89 +1,88 @@
-import { gql } from "@apollo/client";
+import { gql } from '@apollo/client'
 
 const recommendProfiles = gql`
   query RecommendedProfiles {
     recommendedProfiles {
-          id
-        name
-        bio
-        attributes {
-          displayType
-          traitType
-          key
-          value
+      id
+      name
+      bio
+      attributes {
+        displayType
+        traitType
+        key
+        value
+      }
+      followNftAddress
+      metadata
+      isDefault
+      picture {
+        ... on NftImage {
+          contractAddress
+          tokenId
+          uri
+          verified
         }
-          followNftAddress
-        metadata
-        isDefault
-        picture {
-          ... on NftImage {
-            contractAddress
-            tokenId
-            uri
-            verified
+        ... on MediaSet {
+          original {
+            url
+            mimeType
           }
-          ... on MediaSet {
-            original {
-              url
-              mimeType
-            }
-          }
-          __typename
         }
-        handle
-        coverPicture {
-          ... on NftImage {
-            contractAddress
-            tokenId
-            uri
-            verified
-          }
-          ... on MediaSet {
-            original {
-              url
-              mimeType
-            }
-          }
-          __typename
+        __typename
+      }
+      handle
+      coverPicture {
+        ... on NftImage {
+          contractAddress
+          tokenId
+          uri
+          verified
         }
-        ownedBy
-        dispatcher {
-          address
-          canUseRelay
-        }
-        stats {
-          totalFollowers
-          totalFollowing
-          totalPosts
-          totalComments
-          totalMirrors
-          totalPublications
-          totalCollects
-        }
-        followModule {
-          ... on FeeFollowModuleSettings {
-            type
-            amount {
-              asset {
-                symbol
-                name
-                decimals
-                address
-              }
-              value
-            }
-            recipient
+        ... on MediaSet {
+          original {
+            url
+            mimeType
           }
-          ... on ProfileFollowModuleSettings {
+        }
+        __typename
+      }
+      ownedBy
+      dispatcher {
+        address
+        canUseRelay
+      }
+      stats {
+        totalFollowers
+        totalFollowing
+        totalPosts
+        totalComments
+        totalMirrors
+        totalPublications
+        totalCollects
+      }
+      followModule {
+        ... on FeeFollowModuleSettings {
           type
+          amount {
+            asset {
+              symbol
+              name
+              decimals
+              address
+            }
+            value
           }
-          ... on RevertFollowModuleSettings {
-          type
-          }
+          recipient
         }
+        ... on ProfileFollowModuleSettings {
+          type
+        }
+        ... on RevertFollowModuleSettings {
+          type
+        }
+      }
     }
   }
-`;
-
+`
 
 export default recommendProfiles

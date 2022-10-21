@@ -4,6 +4,7 @@ import { AppProps } from 'next/app'
 import Head from 'next/head'
 import { useState } from 'react'
 import client from '../../apollo-client'
+import Layout from '../component/layout/Layout'
 import '../styles/globals.css'
 import '../styles/player.css'
 
@@ -40,7 +41,9 @@ const App: NextPage<AppProps> = ({ Component, pageProps }) => {
             colorScheme={colorScheme}
             toggleColorScheme={toggleColorScheme}
           >
-            <Component {...pageProps} />
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
           </ColorSchemeProvider>
         </MantineProvider>
       </ApolloProvider>

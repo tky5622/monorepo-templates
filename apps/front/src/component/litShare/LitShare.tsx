@@ -1,13 +1,11 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 // import ShareModal from 'lit-share-modal-v3';
 const ShareModal = require('lit-share-modal-v3')
-import { useState } from 'react';
-import './App.css';
-
-
+import { useState } from 'react'
+import './App.css'
 
 const LitShare = () => {
-  const [showShareModal, setShowShareModal] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false)
 
   const onUnifiedAccessControlConditionsSelected = (shareModalOutput: any) => {
     // do things with share modal output
@@ -15,26 +13,25 @@ const LitShare = () => {
 
   return (
     <div className={'App'}>
-      <button onClick={() => setShowShareModal(true)}>
-        Show Share Modal
-      </button>
+      <button onClick={() => setShowShareModal(true)}>Show Share Modal</button>
 
       {showShareModal && (
         <div className={'lit-share-modal'}>
           <ShareModal
             onClose={() => {
-              setShowShareModal(false);
+              setShowShareModal(false)
             }}
-            onUnifiedAccessControlConditionsSelected={onUnifiedAccessControlConditionsSelected}
+            onUnifiedAccessControlConditionsSelected={
+              onUnifiedAccessControlConditionsSelected
+            }
           />
         </div>
       )}
     </div>
-
-  );
+  )
 }
 
-export default LitShare;
+export default LitShare
 
 // CSS in App.css
 
@@ -48,4 +45,3 @@ export default LitShare;
 //   border: 1px solid #333;
 //   border-radius: 0.25em;
 // }
-

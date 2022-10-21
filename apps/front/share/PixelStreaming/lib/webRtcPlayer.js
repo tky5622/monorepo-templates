@@ -2,7 +2,6 @@
 
 // Copyright 1998-2018 Epic Games, Inc. All Rights Reserved.
 // universal module definition - read https://www.davidbcalhoun.com/2014/what-is-amd-commonjs-and-umd/
-
 ;(function (root, factory) {
   var define = define || {}
   if (typeof define === 'function' && define.amd) {

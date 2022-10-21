@@ -1,5 +1,3 @@
-
-
 import { chains, providers } from '@web3modal/ethereum'
 import type { ConfigOptions } from '@web3modal/react'
 import { Web3Modal } from '@web3modal/react'
@@ -23,19 +21,16 @@ const modalConfig: ConfigOptions = {
       // chains.avalanche,
       // chains.avalancheFuji,
       chains.polygon,
-      chains.polygonMumbai
+      chains.polygonMumbai,
     ],
-    providers: [providers.walletConnectProvider({ projectId: WALLET_CONNECT_PROJECT_ID })]
-  }
+    providers: [
+      providers.walletConnectProvider({ projectId: WALLET_CONNECT_PROJECT_ID }),
+    ],
+  },
 }
 
 const WalletConnect: React.FC = () => {
-  return(
-
-<Web3Modal config={modalConfig} />
-  )
-
+  return <Web3Modal config={modalConfig} />
 }
-
 
 export default WalletConnect
