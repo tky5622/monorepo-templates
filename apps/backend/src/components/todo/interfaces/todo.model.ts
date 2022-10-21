@@ -1,10 +1,9 @@
-import { Field, ObjectType } from '@nestjs/graphql';
-
+import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class TodoModel {
   @Field((type) => String)
-  id: string;
+  id: string
 
   @Field((type) => String)
   title: string

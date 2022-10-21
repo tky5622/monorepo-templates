@@ -1,15 +1,17 @@
-import { NextPage } from 'next';
-import { AppProps } from 'next/app';
-import Head from 'next/head';
-import { useState } from 'react';
-import '../styles/globals.css';
-import '../styles/player.css';
+import { ApolloProvider } from '@apollo/client'
+import { NextPage } from 'next'
+import { AppProps } from 'next/app'
+import Head from 'next/head'
+import { useState } from 'react'
+import client from '../../apollo-client'
+import '../styles/globals.css'
+import '../styles/player.css'
 
 import {
   ColorScheme,
   ColorSchemeProvider,
-  MantineProvider
-} from '@mantine/core';
+  MantineProvider,
+} from '@mantine/core'
 
 const App: NextPage<AppProps> = ({ Component, pageProps }) => {
   const [colorScheme, setColorScheme] = useState<ColorScheme>('dark')
@@ -26,20 +28,22 @@ const App: NextPage<AppProps> = ({ Component, pageProps }) => {
           content="minimum-scale=1, initial-scale=1, width=device-width"
         />
       </Head>
-      <MantineProvider
-        withGlobalStyles
-        withNormalizeCSS
-        theme={{
-          colorScheme,
-        }}
-      >
-        <ColorSchemeProvider
-          colorScheme={colorScheme}
-          toggleColorScheme={toggleColorScheme}
+      <ApolloProvider client={client}>
+        <MantineProvider
+          withGlobalStyles
+          withNormalizeCSS
+          theme={{
+            colorScheme,
+          }}
         >
-          <Component {...pageProps} />
-        </ColorSchemeProvider>
-      </MantineProvider>
+          <ColorSchemeProvider
+            colorScheme={colorScheme}
+            toggleColorScheme={toggleColorScheme}
+          >
+            <Component {...pageProps} />
+          </ColorSchemeProvider>
+        </MantineProvider>
+      </ApolloProvider>
     </>
   )
 }

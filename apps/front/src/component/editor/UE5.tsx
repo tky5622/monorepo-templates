@@ -1,24 +1,23 @@
 // import { load } from '@standiart/my-lib';
-import React from 'react';
-import { load } from '../../../share/app';
-import EditorTemplate from '../../../share/editorPage/EditorTemplate';
+import React from 'react'
+import { load } from '../../../share/app'
+import EditorTemplate from '../../../share/editorPage/EditorTemplate'
 const UE5: React.FC = () => {
+  React.useEffect(() => {
+    // TODO: refactor (this is for pixel streaming )
+    const script = document.createElement('script')
 
-React.useEffect(() => {
-  // TODO: refactor (this is for pixel streaming )
-  const script = document.createElement('script');
+    script.src = 'https://webrtc.github.io/adapter/adapter-latest.js'
+    script.async = true
 
-  script.src = "https://webrtc.github.io/adapter/adapter-latest.js";
-  script.async = true;
+    document.body.appendChild(script)
+    load()
+    return () => {
+      document.body.removeChild(script)
+    }
+  }, [])
 
-  document.body.appendChild(script);
-  load();
-  return () => {
-    document.body.removeChild(script);
-  }
-}, []);
-
-  return (<EditorTemplate/>)
+  return <EditorTemplate />
 }
 
 export default UE5

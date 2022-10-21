@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { newMockEvent } from "matchstick-as"
-import { ethereum, Address, BigInt } from "@graphprotocol/graph-ts"
+import { newMockEvent } from 'matchstick-as'
+import { ethereum, Address, BigInt } from '@graphprotocol/graph-ts'
 import {
   Approval,
   ApprovalForAll,
   OwnershipTransferred,
-  Transfer
-} from "../../generated/Contract/Contract"
+  Transfer,
+} from '../../generated/Contract/Contract'
 
 export function createApprovalEvent(
   owner: Address,
@@ -43,13 +43,13 @@ export function createApprovalForAllEvent(
   approvalForAllEvent.parameters = []
 
   approvalForAllEvent.parameters.push(
-    new ethereum.EventParam("owner", ethereum.Value.fromAddress(owner))
+    new ethereum.EventParam('owner', ethereum.Value.fromAddress(owner))
   )
   approvalForAllEvent.parameters.push(
-    new ethereum.EventParam("operator", ethereum.Value.fromAddress(operator))
+    new ethereum.EventParam('operator', ethereum.Value.fromAddress(operator))
   )
   approvalForAllEvent.parameters.push(
-    new ethereum.EventParam("approved", ethereum.Value.fromBoolean(approved))
+    new ethereum.EventParam('approved', ethereum.Value.fromBoolean(approved))
   )
 
   return approvalForAllEvent
@@ -67,12 +67,12 @@ export function createOwnershipTransferredEvent(
 
   ownershipTransferredEvent.parameters.push(
     new ethereum.EventParam(
-      "previousOwner",
+      'previousOwner',
       ethereum.Value.fromAddress(previousOwner)
     )
   )
   ownershipTransferredEvent.parameters.push(
-    new ethereum.EventParam("newOwner", ethereum.Value.fromAddress(newOwner))
+    new ethereum.EventParam('newOwner', ethereum.Value.fromAddress(newOwner))
   )
 
   return ownershipTransferredEvent

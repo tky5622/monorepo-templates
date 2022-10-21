@@ -6,8 +6,8 @@ const ControlSchemeType = {
 
   // A mouse can hover over the WebRTC player so the user needs to click and
   // drag to control the orientation of the camera.
-  HoveringMouse: 1
-};
+  HoveringMouse: 1,
+}
 
 // TODO: ここはsettings
 // var inputOptions = {
@@ -67,9 +67,9 @@ const MessageType = {
   // Touch Input Messages. Range = 80..89.
   TouchStart: 80,
   TouchEnd: 81,
-  TouchMove: 82
+  TouchMove: 82,
 
   /**************************************************************************/
-};
+}
 
-export { MessageType, ControlSchemeType };
+export { MessageType, ControlSchemeType }

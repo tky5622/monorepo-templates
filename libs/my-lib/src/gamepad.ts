@@ -115,19 +115,17 @@
 //     delete controllers[e.gamepad.index];
 // }
 
-
 //inside this function , gamepad event exist
 // function setupHtmlEvents() {
 //     //Window events
 //     window.addEventListener('resize', resizePlayerStyle, true);
 //     window.addEventListener('orientationchange', onOrientationChange);
 
-    //Gamepad events
-    // if (haveEvents) {
-    //     window.addEventListener("gamepadconnected", gamepadConnectHandler);
-    //     window.addEventListener("gamepaddisconnected", gamepadDisconnectHandler);
-    // } else if (haveWebkitEvents) {
-    //     window.addEventListener("webkitgamepadconnected", gamepadConnectHandler);
-    //     window.addEventListener("webkitgamepaddisconnected", gamepadDisconnectHandler);
-    // }
-
+//Gamepad events
+// if (haveEvents) {
+//     window.addEventListener("gamepadconnected", gamepadConnectHandler);
+//     window.addEventListener("gamepaddisconnected", gamepadDisconnectHandler);
+// } else if (haveWebkitEvents) {
+//     window.addEventListener("webkitgamepadconnected", gamepadConnectHandler);
+//     window.addEventListener("webkitgamepaddisconnected", gamepadDisconnectHandler);
+// }

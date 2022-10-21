@@ -2,18 +2,18 @@ import {
   Approval as ApprovalEvent,
   ApprovalForAll as ApprovalForAllEvent,
   OwnershipTransferred as OwnershipTransferredEvent,
-  Transfer as TransferEvent
-} from "../generated/Contract/Contract"
+  Transfer as TransferEvent,
+} from '../generated/Contract/Contract'
 import {
   Approval,
   ApprovalForAll,
   OwnershipTransferred,
-  Transfer
-} from "../generated/schema"
+  Transfer,
+} from '../generated/schema'
 
 export function handleApproval(event: ApprovalEvent): void {
   const entity = new Approval(
-    event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+    event.transaction.hash.toHex() + '-' + event.logIndex.toString()
   )
   entity.owner = event.params.owner
   entity.approved = event.params.approved
@@ -23,7 +23,7 @@ export function handleApproval(event: ApprovalEvent): void {
 
 export function handleApprovalForAll(event: ApprovalForAllEvent): void {
   const entity = new ApprovalForAll(
-    event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+    event.transaction.hash.toHex() + '-' + event.logIndex.toString()
   )
   entity.owner = event.params.owner
   entity.operator = event.params.operator
@@ -35,7 +35,7 @@ export function handleOwnershipTransferred(
   event: OwnershipTransferredEvent
 ): void {
   const entity = new OwnershipTransferred(
-    event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+    event.transaction.hash.toHex() + '-' + event.logIndex.toString()
   )
   entity.previousOwner = event.params.previousOwner
   entity.newOwner = event.params.newOwner
@@ -44,7 +44,7 @@ export function handleOwnershipTransferred(
 
 export function handleTransfer(event: TransferEvent): void {
   const entity = new Transfer(
-    event.transaction.hash.toHex() + "-" + event.logIndex.toString()
+    event.transaction.hash.toHex() + '-' + event.logIndex.toString()
   )
   entity.from = event.params.from
   entity.to = event.params.to

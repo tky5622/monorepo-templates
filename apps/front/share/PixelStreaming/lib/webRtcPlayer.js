@@ -1,190 +1,190 @@
-"use strict";
+'use strict'
 
 // Copyright 1998-2018 Epic Games, Inc. All Rights Reserved.
 // universal module definition - read https://www.davidbcalhoun.com/2014/what-is-amd-commonjs-and-umd/
 
-(function(root, factory) {
-  var define = define || {};
-  if (typeof define === "function" && define.amd) {
+;(function (root, factory) {
+  var define = define || {}
+  if (typeof define === 'function' && define.amd) {
     // AMD. Register as an anonymous module.
-    define(["webrtc-adapter"], factory);
-  } else if (typeof exports === "object") {
+    define(['webrtc-adapter'], factory)
+  } else if (typeof exports === 'object') {
     // Node. Does not work with strict CommonJS, but
     // only CommonJS-like environments that support module.exports,
     // like Node.
-    module.exports = factory(require("webrtc-adapter"));
+    module.exports = factory(require('webrtc-adapter'))
   } else {
     // Browser globals (root is window)
-    root.webRtcPlayer = factory(root.adapter);
+    root.webRtcPlayer = factory(root.adapter)
   }
-})(undefined, function(adapter) {
+})(undefined, function (adapter) {
   function webRtcPlayer(parOptions) {
-    parOptions = parOptions || {};
+    parOptions = parOptions || {}
 
-    var self = this;
+    var self = this
 
     //**********************
     //Config setup
     //**********************;
-    this.cfg = parOptions.peerConnectionOptions || {};
-    this.cfg.sdpSemantics = "unified-plan";
-    this.pcClient = null;
-    this.dcClient = null;
-    this.tnClient = null;
+    this.cfg = parOptions.peerConnectionOptions || {}
+    this.cfg.sdpSemantics = 'unified-plan'
+    this.pcClient = null
+    this.dcClient = null
+    this.tnClient = null
 
     this.sdpConstraints = {
       offerToReceiveAudio: 1,
-      offerToReceiveVideo: 1
-    };
+      offerToReceiveVideo: 1,
+    }
 
     // See https://www.w3.org/TR/webrtc/#dom-rtcdatachannelinit for values
-    this.dataChannelOptions = { ordered: true };
+    this.dataChannelOptions = { ordered: true }
 
     //**********************
     //Functions
     //**********************
 
     //Create Video element and expose that as a parameter
-    const createWebRtcVideo = function() {
-      var video = document.createElement("video");
+    const createWebRtcVideo = function () {
+      var video = document.createElement('video')
 
-      video.id = "streamingVideo";
-      video.playsInline = true;
+      video.id = 'streamingVideo'
+      video.playsInline = true
       video.addEventListener(
-        "loadedmetadata",
-        function(e) {
+        'loadedmetadata',
+        function (e) {
           if (self.onVideoInitialised) {
-            self.onVideoInitialised();
+            self.onVideoInitialised()
           }
         },
         true
-      );
-      return video;
-    };
+      )
+      return video
+    }
 
-    this.video = createWebRtcVideo();
+    this.video = createWebRtcVideo()
 
-    const onsignalingstatechange = function(state) {
-      console.info("signaling state change:", state);
-    };
+    const onsignalingstatechange = function (state) {
+      console.info('signaling state change:', state)
+    }
 
-    const oniceconnectionstatechange = function(state) {
-      console.info("ice connection state change:", state);
-    };
+    const oniceconnectionstatechange = function (state) {
+      console.info('ice connection state change:', state)
+    }
 
-    const onicegatheringstatechange = function(state) {
-      console.info("ice gathering state change:", state);
-    };
+    const onicegatheringstatechange = function (state) {
+      console.info('ice gathering state change:', state)
+    }
 
-    const handleOnTrack = function(e) {
-      console.log("handleOnTrack", e.streams);
+    const handleOnTrack = function (e) {
+      console.log('handleOnTrack', e.streams)
       if (self.video.srcObject !== e.streams[0]) {
-        console.log("setting video stream from ontrack");
-        self.video.srcObject = e.streams[0];
+        console.log('setting video stream from ontrack')
+        self.video.srcObject = e.streams[0]
       }
-    };
+    }
 
-    const setupDataChannel = function(pc, label, options) {
+    const setupDataChannel = function (pc, label, options) {
       try {
-        var datachannel = pc.createDataChannel(label, options);
-        console.log(`Created datachannel (${label})`);
+        var datachannel = pc.createDataChannel(label, options)
+        console.log(`Created datachannel (${label})`)
 
-        datachannel.onopen = function(e) {
-          console.log(`data channel (${label}) connect`);
+        datachannel.onopen = function (e) {
+          console.log(`data channel (${label}) connect`)
           if (self.onDataChannelConnected) {
-            self.onDataChannelConnected();
+            self.onDataChannelConnected()
           }
-        };
+        }
 
-        datachannel.onclose = function(e) {
-          console.log(`data channel (${label}) closed`);
-        };
+        datachannel.onclose = function (e) {
+          console.log(`data channel (${label}) closed`)
+        }
 
-        datachannel.onmessage = function(e) {
-          console.log(`Got message (${label})`, e.data);
-          if (self.onDataChannelMessage) self.onDataChannelMessage(e.data);
-        };
+        datachannel.onmessage = function (e) {
+          console.log(`Got message (${label})`, e.data)
+          if (self.onDataChannelMessage) self.onDataChannelMessage(e.data)
+        }
 
-        return datachannel;
+        return datachannel
       } catch (e) {
-        console.warn("No data channel", e);
-        return null;
+        console.warn('No data channel', e)
+        return null
       }
-    };
+    }
 
-    const onicecandidate = function(e) {
-      console.log("ICE candidate", e);
+    const onicecandidate = function (e) {
+      console.log('ICE candidate', e)
       if (e.candidate) {
-        self.onWebRtcCandidate(JSON.stringify(e.candidate));
+        self.onWebRtcCandidate(JSON.stringify(e.candidate))
       }
-    };
+    }
 
-    const handleCreateOffer = function(pc) {
+    const handleCreateOffer = function (pc) {
       pc.createOffer(self.sdpConstraints).then(
-        function(offerDesc) {
-          pc.setLocalDescription(offerDesc);
+        function (offerDesc) {
+          pc.setLocalDescription(offerDesc)
           if (self.onWebRtcOffer) {
             // (andriy): increase start bitrate from 300 kbps to 20 mbps and max bitrate from 2.5 mbps to 100 mbps
             // (100 mbps means we don't restrict encoder at all)
             // after we `setLocalDescription` because other browsers are not so happy to see google-specific config
             offerDesc.sdp = offerDesc.sdp.replace(
               /(a=fmtp:\d+ .*level-asymmetry-allowed=.*)\r\n/gm,
-              "$1;x-google-start-bitrate=20000;x-google-max-bitrate=100000\r\n"
-            );
+              '$1;x-google-start-bitrate=20000;x-google-max-bitrate=100000\r\n'
+            )
             //console.log('Sending offer: ', offerDesc)
-            self.onWebRtcOffer(JSON.stringify(offerDesc));
+            self.onWebRtcOffer(JSON.stringify(offerDesc))
           }
         },
-        function() {
-          console.warn("Couldn't create offer");
+        function () {
+          console.warn("Couldn't create offer")
         }
-      );
-    };
+      )
+    }
 
-    const setupPeerConnection = function(pc) {
+    const setupPeerConnection = function (pc) {
       if (pc.SetBitrate)
-        console.log("Hurray! there's RTCPeerConnection.SetBitrate function");
+        console.log("Hurray! there's RTCPeerConnection.SetBitrate function")
 
       //Setup peerConnection events
-      pc.onsignalingstatechange = onsignalingstatechange;
-      pc.oniceconnectionstatechange = oniceconnectionstatechange;
-      pc.onicegatheringstatechange = onicegatheringstatechange;
+      pc.onsignalingstatechange = onsignalingstatechange
+      pc.oniceconnectionstatechange = oniceconnectionstatechange
+      pc.onicegatheringstatechange = onicegatheringstatechange
 
-      pc.ontrack = handleOnTrack;
-      pc.onicecandidate = onicecandidate;
-    };
+      pc.ontrack = handleOnTrack
+      pc.onicecandidate = onicecandidate
+    }
 
-    const generateAggregatedStatsFunction = function() {
-      if (!self.aggregatedStats) self.aggregatedStats = {};
+    const generateAggregatedStatsFunction = function () {
+      if (!self.aggregatedStats) self.aggregatedStats = {}
 
-      return function(stats) {
+      return function (stats) {
         //console.log('Printing Stats');
 
-        let newStat = {};
-        stats.forEach(stat => {
+        let newStat = {}
+        stats.forEach((stat) => {
           //console.log(JSON.stringify(stat))
           if (
-            stat.type == "inbound-rtp" &&
+            stat.type == 'inbound-rtp' &&
             !stat.isRemote &&
-            (stat.mediaType == "video" ||
-              stat.id.toLowerCase().includes("video"))
+            (stat.mediaType == 'video' ||
+              stat.id.toLowerCase().includes('video'))
           ) {
-            newStat.timestamp = stat.timestamp;
-            newStat.bytesReceived = stat.bytesReceived;
-            newStat.framesDecoded = stat.framesDecoded;
-            newStat.packetsLost = stat.packetsLost;
+            newStat.timestamp = stat.timestamp
+            newStat.bytesReceived = stat.bytesReceived
+            newStat.framesDecoded = stat.framesDecoded
+            newStat.packetsLost = stat.packetsLost
             newStat.bytesReceivedStart =
               self.aggregatedStats && self.aggregatedStats.bytesReceivedStart
                 ? self.aggregatedStats.bytesReceivedStart
-                : stat.bytesReceived;
+                : stat.bytesReceived
             newStat.framesDecodedStart =
               self.aggregatedStats && self.aggregatedStats.framesDecodedStart
                 ? self.aggregatedStats.framesDecodedStart
-                : stat.framesDecoded;
+                : stat.framesDecoded
             newStat.timestampStart =
               self.aggregatedStats && self.aggregatedStats.timestampStart
                 ? self.aggregatedStats.timestampStart
-                : stat.timestamp;
+                : stat.timestamp
 
             if (self.aggregatedStats && self.aggregatedStats.timestamp) {
               if (self.aggregatedStats.bytesReceived) {
@@ -194,18 +194,18 @@
                   (8 *
                     (newStat.bytesReceived -
                       self.aggregatedStats.bytesReceived)) /
-                  (newStat.timestamp - self.aggregatedStats.timestamp);
-                newStat.bitrate = Math.floor(newStat.bitrate);
+                  (newStat.timestamp - self.aggregatedStats.timestamp)
+                newStat.bitrate = Math.floor(newStat.bitrate)
                 newStat.lowBitrate =
                   self.aggregatedStats.lowBitrate &&
                   self.aggregatedStats.lowBitrate < newStat.bitrate
                     ? self.aggregatedStats.lowBitrate
-                    : newStat.bitrate;
+                    : newStat.bitrate
                 newStat.highBitrate =
                   self.aggregatedStats.highBitrate &&
                   self.aggregatedStats.highBitrate > newStat.bitrate
                     ? self.aggregatedStats.highBitrate
-                    : newStat.bitrate;
+                    : newStat.bitrate
               }
 
               if (self.aggregatedStats.bytesReceivedStart) {
@@ -213,26 +213,26 @@
                   (8 *
                     (newStat.bytesReceived -
                       self.aggregatedStats.bytesReceivedStart)) /
-                  (newStat.timestamp - self.aggregatedStats.timestampStart);
-                newStat.avgBitrate = Math.floor(newStat.avgBitrate);
+                  (newStat.timestamp - self.aggregatedStats.timestampStart)
+                newStat.avgBitrate = Math.floor(newStat.avgBitrate)
               }
 
               if (self.aggregatedStats.framesDecoded) {
                 // framerate = frames decoded since last time / number of seconds since last time
                 newStat.framerate =
                   (newStat.framesDecoded - self.aggregatedStats.framesDecoded) /
-                  ((newStat.timestamp - self.aggregatedStats.timestamp) / 1000);
-                newStat.framerate = Math.floor(newStat.framerate);
+                  ((newStat.timestamp - self.aggregatedStats.timestamp) / 1000)
+                newStat.framerate = Math.floor(newStat.framerate)
                 newStat.lowFramerate =
                   self.aggregatedStats.lowFramerate &&
                   self.aggregatedStats.lowFramerate < newStat.framerate
                     ? self.aggregatedStats.lowFramerate
-                    : newStat.framerate;
+                    : newStat.framerate
                 newStat.highFramerate =
                   self.aggregatedStats.highFramerate &&
                   self.aggregatedStats.highFramerate > newStat.framerate
                     ? self.aggregatedStats.highFramerate
-                    : newStat.framerate;
+                    : newStat.framerate
               }
 
               if (self.aggregatedStats.framesDecodedStart) {
@@ -240,44 +240,44 @@
                   (newStat.framesDecoded -
                     self.aggregatedStats.framesDecodedStart) /
                   ((newStat.timestamp - self.aggregatedStats.timestampStart) /
-                    1000);
-                newStat.avgframerate = Math.floor(newStat.avgframerate);
+                    1000)
+                newStat.avgframerate = Math.floor(newStat.avgframerate)
               }
             }
           }
 
           //Read video track stats
-          if (stat.type == "track" && stat.trackIdentifier == "video_label") {
-            newStat.framesDropped = stat.framesDropped;
-            newStat.framesReceived = stat.framesReceived;
+          if (stat.type == 'track' && stat.trackIdentifier == 'video_label') {
+            newStat.framesDropped = stat.framesDropped
+            newStat.framesReceived = stat.framesReceived
             newStat.framesDroppedPercentage =
-              (stat.framesDropped / stat.framesReceived) * 100;
-            newStat.frameHeight = stat.frameHeight;
-            newStat.frameWidth = stat.frameWidth;
+              (stat.framesDropped / stat.framesReceived) * 100
+            newStat.frameHeight = stat.frameHeight
+            newStat.frameWidth = stat.frameWidth
             newStat.frameHeightStart =
               self.aggregatedStats && self.aggregatedStats.frameHeightStart
                 ? self.aggregatedStats.frameHeightStart
-                : stat.frameHeight;
+                : stat.frameHeight
             newStat.frameWidthStart =
               self.aggregatedStats && self.aggregatedStats.frameWidthStart
                 ? self.aggregatedStats.frameWidthStart
-                : stat.frameWidth;
+                : stat.frameWidth
           }
 
           if (
-            stat.type == "candidate-pair" &&
-            stat.hasOwnProperty("currentRoundTripTime")
+            stat.type == 'candidate-pair' &&
+            stat.hasOwnProperty('currentRoundTripTime')
           ) {
-            newStat.currentRoundTripTime = stat.currentRoundTripTime;
+            newStat.currentRoundTripTime = stat.currentRoundTripTime
           }
-        });
+        })
 
         //console.log(JSON.stringify(newStat));
-        self.aggregatedStats = newStat;
+        self.aggregatedStats = newStat
 
-        if (self.onAggregatedStats) self.onAggregatedStats(newStat);
-      };
-    };
+        if (self.onAggregatedStats) self.onAggregatedStats(newStat)
+      }
+    }
 
     //**********************
     //Public functions
@@ -285,74 +285,74 @@
 
     //This is called when revceiving new ice candidates individually instead of part of the offer
     //This is currently not used but would be called externally from this class
-    this.handleCandidateFromServer = function(iceCandidate) {
-      console.log("ICE candidate: ", iceCandidate);
-      let candidate = new RTCIceCandidate(iceCandidate);
-      self.pcClient.addIceCandidate(candidate).then(_ => {
-        console.log("ICE candidate successfully added");
-      });
-    };
+    this.handleCandidateFromServer = function (iceCandidate) {
+      console.log('ICE candidate: ', iceCandidate)
+      let candidate = new RTCIceCandidate(iceCandidate)
+      self.pcClient.addIceCandidate(candidate).then((_) => {
+        console.log('ICE candidate successfully added')
+      })
+    }
 
     //Called externaly to create an offer for the server
-    this.createOffer = function() {
+    this.createOffer = function () {
       if (self.pcClient) {
-        console.log("Closing existing PeerConnection");
-        self.pcClient.close();
-        self.pcClient = null;
+        console.log('Closing existing PeerConnection')
+        self.pcClient.close()
+        self.pcClient = null
       }
-      self.pcClient = new RTCPeerConnection(self.cfg);
-      setupPeerConnection(self.pcClient);
+      self.pcClient = new RTCPeerConnection(self.cfg)
+      setupPeerConnection(self.pcClient)
       self.dcClient = setupDataChannel(
         self.pcClient,
-        "cirrus",
+        'cirrus',
         self.dataChannelOptions
-      );
-      handleCreateOffer(self.pcClient);
-    };
+      )
+      handleCreateOffer(self.pcClient)
+    }
 
     //Called externaly when an answer is received from the server
-    this.receiveAnswer = function(answer) {
-      console.log("Received answer", answer);
-      var answerDesc = new RTCSessionDescription(answer);
-      self.pcClient.setRemoteDescription(answerDesc);
-    };
+    this.receiveAnswer = function (answer) {
+      console.log('Received answer', answer)
+      var answerDesc = new RTCSessionDescription(answer)
+      self.pcClient.setRemoteDescription(answerDesc)
+    }
 
-    this.close = function() {
+    this.close = function () {
       if (self.pcClient) {
-        console.log("Closing existing peerClient");
-        self.pcClient.close();
-        self.pcClient = null;
+        console.log('Closing existing peerClient')
+        self.pcClient.close()
+        self.pcClient = null
       }
       if (self.aggregateStatsIntervalId)
-        clearInterval(self.aggregateStatsIntervalId);
-    };
+        clearInterval(self.aggregateStatsIntervalId)
+    }
 
     //Sends data across the datachannel
-    this.send = function(data) {
-      if (self.dcClient && self.dcClient.readyState == "open") {
+    this.send = function (data) {
+      if (self.dcClient && self.dcClient.readyState == 'open') {
         //console.log('Sending data on dataconnection', self.dcClient)
-        self.dcClient.send(data);
+        self.dcClient.send(data)
       }
-    };
+    }
 
-    this.getStats = function(onStats) {
+    this.getStats = function (onStats) {
       if (self.pcClient && onStats) {
-        self.pcClient.getStats(null).then(stats => {
-          onStats(stats);
-        });
+        self.pcClient.getStats(null).then((stats) => {
+          onStats(stats)
+        })
       }
-    };
+    }
 
-    this.aggregateStats = function(checkInterval) {
-      let calcAggregatedStats = generateAggregatedStatsFunction();
+    this.aggregateStats = function (checkInterval) {
+      let calcAggregatedStats = generateAggregatedStatsFunction()
       let printAggregatedStats = () => {
-        self.getStats(calcAggregatedStats);
-      };
+        self.getStats(calcAggregatedStats)
+      }
       self.aggregateStatsIntervalId = setInterval(
         printAggregatedStats,
         checkInterval
-      );
-    };
+      )
+    }
   }
-  return webRtcPlayer;
-});
+  return webRtcPlayer
+})

@@ -4,10 +4,7 @@ import React from 'react'
 import 'rsuite/dist/rsuite.min.css'
 
 // libs
-import {
-  ContextProvider, Player, usePlayer,
-  useSystem
-} from 'pixel-streaming'
+import { ContextProvider, Player, usePlayer, useSystem } from 'pixel-streaming'
 
 // TODO: split context file later
 const PlayerContext: React.FC = () => {

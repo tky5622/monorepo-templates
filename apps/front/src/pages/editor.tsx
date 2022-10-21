@@ -11,7 +11,6 @@ const UE5 = dynamic(() => import('../component/editor/UE5'), {
 })
 
 const Editor: NextPage = () => {
-
   return (
     <div className={styles.container}>
       <Head>

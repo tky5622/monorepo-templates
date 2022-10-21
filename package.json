@@ -84,7 +84,7 @@
     "@commitlint/cli": "^17.1.2",
     "@commitlint/config-conventional": "^17.1.0",
     "@emotion/babel-plugin": "11.10.2",
-    "@graphql-codegen/cli": "^2.13.3",
+    "@graphql-codegen/cli": "^2.13.7",
     "@graphql-codegen/typescript": "^2.7.3",
     "@graphql-codegen/typescript-graphql-request": "^4.5.5",
     "@nestjs/schematics": "^9.0.0",
