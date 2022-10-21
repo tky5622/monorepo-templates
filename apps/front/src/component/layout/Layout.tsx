@@ -1,5 +1,6 @@
 import { AppShell } from '@mantine/core'
 import React from 'react'
+import WalletConnectModal from '../walletConnect/WalletConnectModal'
 import AppHeader from './AppHeader'
 import AppNavBar from './NavBar'
 
@@ -22,6 +23,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         },
       })}
     >
+      <WalletConnectModal/>
       {children}
     </AppShell>
   )

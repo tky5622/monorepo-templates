@@ -13,9 +13,7 @@
   },
   "../../../../node_modules/@web3modal/core/dist/index.js -> @web3modal/ethereum": {
     "id": "../../../../node_modules/@web3modal/core/dist/index.js -> @web3modal/ethereum",
-    "files": [
-      "static/chunks/node_modules_web3modal_ethereum_dist_index_js.js"
-    ]
+    "files": []
   },
   "../../../../node_modules/@web3modal/react/dist/index.js -> @web3modal/ui": {
     "id": "../../../../node_modules/@web3modal/react/dist/index.js -> @web3modal/ui",
