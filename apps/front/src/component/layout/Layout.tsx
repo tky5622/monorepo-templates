@@ -23,7 +23,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         },
       })}
     >
-      <WalletConnectModal/>
+      <WalletConnectModal />
       {children}
     </AppShell>
   )
