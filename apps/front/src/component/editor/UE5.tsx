@@ -3,10 +3,21 @@ import React from 'react';
 import { load } from '../../../share/app';
 import EditorTemplate from '../../../share/editorPage/EditorTemplate';
 const UE5: React.FC = () => {
-  React.useEffect(() => {
-  // Your code here
+
+React.useEffect(() => {
+  // TODO: refactor (this is for pixel streaming )
+  const script = document.createElement('script');
+
+  script.src = "https://webrtc.github.io/adapter/adapter-latest.js";
+  script.async = true;
+
+  document.body.appendChild(script);
   load();
+  return () => {
+    document.body.removeChild(script);
+  }
 }, []);
+
   return (<EditorTemplate/>)
 }
 

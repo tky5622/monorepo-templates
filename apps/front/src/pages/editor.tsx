@@ -11,18 +11,6 @@ const UE5 = dynamic(() => import('../component/editor/UE5'), {
 })
 
 const Editor: NextPage = () => {
-  React.useEffect(() => {
-  const script = document.createElement('script');
-
-  script.src = "https://webrtc.github.io/adapter/adapter-latest.js";
-  script.async = true;
-
-  document.body.appendChild(script);
-
-  return () => {
-    document.body.removeChild(script);
-  }
-}, []);
 
   return (
     <div className={styles.container}>
