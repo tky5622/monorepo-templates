@@ -2434,7 +2434,7 @@ function connect() {
     return
   }
 
-  ws = new WebSocket('ws://127.0.0.1')
+  ws = new WebSocket('ws://takuya530.asuscomm.com')
   // ws = new WebSocket(window.location.href.replace('http://', 'ws://').replace('https://', 'wss://'));
   console.log(ws, 'console.log ws')
 
