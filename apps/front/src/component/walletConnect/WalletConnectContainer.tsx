@@ -8,7 +8,6 @@ export default function WalletConnectContainer() {
 
   return (
     <div>
-      <p>testestestststtest</p>
       {isConnected ? (
         <>
           {address}

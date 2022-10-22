@@ -1,7 +1,7 @@
 import { Group, Modal } from '@mantine/core'
 
-import { useAddress, useNFTCollection } from '@thirdweb-dev/react'
-import React, { useState } from 'react'
+// import { useAddress, useNFTCollection } from '@thirdweb-dev/react'
+import { useState } from 'react'
 
 import { TextInput } from '@mantine/core'
 import { useForm } from '@mantine/form'
@@ -20,7 +20,7 @@ const UploadNftModal: any = ({ isOpen, setIsOpened }: any) => {
   const [isLoading, setIsLoading] = useState(false)
 
   const NFT_COLLECTION_MUMBAI_CONTRACT = 'YOUR_CONTRACT_ID'
-  const nft = useNFTCollection(NFT_COLLECTION_MUMBAI_CONTRACT)
+  // const nft = useNFTCollection(NFT_COLLECTION_MUMBAI_CONTRACT)
 
   const onChangeHandle = (event: any) => {
     setFile(event.target.files[0])
@@ -28,29 +28,29 @@ const UploadNftModal: any = ({ isOpen, setIsOpened }: any) => {
   // const address = useAddress()
   const address = 'true'
 
-  const uploadHandle = ({ name, description, file }: any) => {
-    if (!address) {
-      return
-    }
-    setIsLoading(true)
-    nft
-      ?.mintTo(address, {
-        name,
-        description,
-        file: file,
-      })
-      .then(() => {
-        return nft?.getAll()
-      })
-      .then((nftsRes: any[]) => {
-        console.log(nftsRes)
-        // setNftList(nftsRes)
-      })
-      .finally(() => {
-        setIsLoading(false)
-        onClose()
-      })
-  }
+  // const uploadHandle = ({ name, description, file }: any) => {
+  //   if (!address) {
+  //     return
+  //   }
+  //   setIsLoading(true)
+  //   nft
+  //     ?.mintTo(address, {
+  //       name,
+  //       description,
+  //       file: file,
+  //     })
+  //     .then(() => {
+  //       return nft?.getAll()
+  //     })
+  //     .then((nftsRes: any[]) => {
+  //       console.log(nftsRes)
+  //       // setNftList(nftsRes)
+  //     })
+  //     .finally(() => {
+  //       setIsLoading(false)
+  //       onClose()
+  //     })
+  // }
 
   const form = useForm({
     initialValues: {
@@ -72,7 +72,7 @@ const UploadNftModal: any = ({ isOpen, setIsOpened }: any) => {
       {true && (
         <>
           <Modal opened={isOpen} onClose={onClose}>
-            <form onSubmit={form.onSubmit((values) => uploadHandle(values))}>
+            <form onSubmit={form.onSubmit((values) => console.log(values))}>
               <TextInput
                 id="name"
                 type="text"
@@ -96,7 +96,7 @@ const UploadNftModal: any = ({ isOpen, setIsOpened }: any) => {
               <RoundButton onClick={onClose}>Close</RoundButton>
               <RoundButton
                 // isLoading={isLoading}
-                onClick={uploadHandle}
+                onClick={console.log()}
               >
                 Upload
               </RoundButton>
