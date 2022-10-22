@@ -37,3 +37,5 @@ artifacts
 .next
 .nx-cache
 /front/.next
+/dist
+/tmp

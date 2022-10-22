@@ -1,5 +1,6 @@
 /* eslint-disable */
 // Copyright Epic Games, Inc. All Rights Reserved.
+// @ts-nocheck
 type Config = {
   startVideoMuted?: boolean
   peerConnectionOptions?: {}
