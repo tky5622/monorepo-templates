@@ -1,6 +1,7 @@
 import { Carousel } from '@mantine/carousel';
+import { Button, createStyles, Paper, Text, Title, useMantineTheme } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
-import { createStyles, Paper, Text, Title, Button, useMantineTheme } from '@mantine/core';
+import Router from 'next/router';
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -38,6 +39,11 @@ interface CardProps {
 
 function Card({ image, title, category }: CardProps) {
   const { classes } = useStyles();
+  const onClick = () => {
+    Router.push('/project/1')
+  }
+
+
 
   return (
     <Paper
@@ -55,8 +61,8 @@ function Card({ image, title, category }: CardProps) {
           {title}
         </Title>
       </div>
-      <Button variant="white" color="dark">
-        Read article
+      <Button variant="white" color="dark" onClick={onClick}>
+        See Project
       </Button>
     </Paper>
   );

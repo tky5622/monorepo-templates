@@ -80,11 +80,12 @@ export function AppHeader() {
   const [opened, { toggle }] = useDisclosure(false);
   const items = links.map((link) => {
     const menuItems = link.links?.map((item) => (
-      <Menu.Item key={item.link}>
-        <Link href={link.link}>
+      <Link key={item.link} href={link.link} >
+      <Menu.Item >
         {item.label}
-        </Link>
         </Menu.Item>
+      </Link>
+
     ));
 
     if (menuItems) {
@@ -108,14 +109,15 @@ export function AppHeader() {
     }
 
     return (
-      <a
-        key={link.label}
-        href={link.link}
-        className={classes.link}
-        onClick={(event) => event.preventDefault()}
-      >
+
+        <Link
+          href={link.link}
+          key={link.label}
+          className={classes.link}
+        // onClick={(event) => event.preventDefault()}
+        >
         {link.label}
-      </a>
+      </Link>
     );
   });
 
