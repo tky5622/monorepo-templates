@@ -1,9 +1,11 @@
 /* eslint-disable react/react-in-jsx-scope */
 import type { NextPage } from 'next'
 import Head from 'next/head'
+import React from 'react'
 import UploadNFTButton from '../../component/nft/UploadNft'
+import NoSSR from '../../component/shared/NoSSR'
 
-const Editor: NextPage = () => {
+const Project: NextPage = () => {
   return (
     <div>
       <Head>
@@ -13,7 +15,9 @@ const Editor: NextPage = () => {
       </Head>
 
       <main >
-        <UploadNFTButton/>
+        <NoSSR>
+          <UploadNFTButton/>
+        </NoSSR>
       </main>
 
       <footer></footer>
@@ -21,4 +25,4 @@ const Editor: NextPage = () => {
   )
 }
 
-export default Editor
+export default Project

@@ -42,7 +42,6 @@ const App: NextPage<AppProps> = ({ Component, pageProps }) => {
           >
             <Layout>
               <Component {...pageProps} />
-              <>fwefwefwefwefwefwffewfwefewedcvsdvsdfw</>
             </Layout>
           </ColorSchemeProvider>
         </MantineProvider>

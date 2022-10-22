@@ -8,7 +8,7 @@
     "tools"
   ],
   "scripts": {
-    "start": "nx serve",
+    "start": "FAST_REFRESH=false CHOKIDAR_USEPOLLING=true nx serve",
     "build": "nx build",
     "dev": "nx serve front",
     "test": "nx test",

@@ -27,51 +27,26 @@ const UploadNftModal: any = ({ isOpen, setIsOpened }: any) => {
   }
   // const address = useAddress()
   const address = 'true'
-
-  // const uploadHandle = ({ name, description, file }: any) => {
-  //   if (!address) {
-  //     return
-  //   }
-  //   setIsLoading(true)
-  //   nft
-  //     ?.mintTo(address, {
-  //       name,
-  //       description,
-  //       file: file,
-  //     })
-  //     .then(() => {
-  //       return nft?.getAll()
-  //     })
-  //     .then((nftsRes: any[]) => {
-  //       console.log(nftsRes)
-  //       // setNftList(nftsRes)
-  //     })
-  //     .finally(() => {
-  //       setIsLoading(false)
-  //       onClose()
-  //     })
-  // }
-
   const form = useForm({
     initialValues: {
       name: '',
       description,
       file: file,
     },
-    // validate: {
-    //   name: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
-    // },
   })
 
   const onClose = () => {
     setIsOpened(false)
   }
 
+  console.log(isOpen, 'uploda nft modal')
+
   return (
     <>
+    <p>dewfewfwfwff</p>
       {true && (
         <>
-          <Modal opened={isOpen} onClose={onClose}>
+          <Modal opened={true} onClose={onClose} title="Introduce yourself!">
             <form onSubmit={form.onSubmit((values) => console.log(values))}>
               <TextInput
                 id="name"
