@@ -3,7 +3,7 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { NftDetails } from '../../component/nft/NftDetails'
 import TabContainer from '../../component/nft/TabContainer'
-import UploadNFTButton from '../../component/nft/UploadNft'
+// import UploadNFTButton from '../../component/nft/UploadNft'
 import NoSSR from '../../component/shared/NoSSR'
 const Artist: NextPage = () => {
   return (
