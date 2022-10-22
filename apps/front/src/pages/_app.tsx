@@ -4,14 +4,13 @@ import { AppProps } from 'next/app'
 import Head from 'next/head'
 import { useState } from 'react'
 import client from '../../apollo-client'
-import Layout from '../component/layout/Layout'
 import '../styles/globals.css'
 import '../styles/player.css'
-
+import Layout from '../component/layout/Layout'
 import {
   ColorScheme,
   ColorSchemeProvider,
-  MantineProvider,
+  MantineProvider
 } from '@mantine/core'
 
 const App: NextPage<AppProps> = ({ Component, pageProps }) => {

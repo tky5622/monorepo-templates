@@ -7,15 +7,16 @@ import { HeroBullets } from '../component/home/HeroBullets'
 import { UsersRolesTable } from '../component/home/TopUserList'
 import { CardsCarousel } from '../component/shared/molecules/CardList'
 import { NftList } from '../component/shared/molecules/NftList'
+import NoSSR from '../component/shared/NoSSR'
 const Home: NextPage = () => {
   return (
-    <>
+    <NoSSR>
       <HeroBullets/>
       <CardsCarousel/>
       <UsersRolesTable/>
       <NftList/>
       <FreatureSection/>
-    </>
+    </NoSSR>
   )
 }
 
