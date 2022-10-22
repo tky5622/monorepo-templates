@@ -11,7 +11,7 @@ import { useForm } from '@mantine/form'
 import RoundButton from '../shared/RoundButton'
 import NftDropZone from './NftDropZone'
 
-const UploadNftModal: any = ({ isOpen, setIsOpened }: any) => {
+const UploadNftModal: any = ({ isOpen, setIsOpen }: any) => {
   // const { setNftList } = useContext(AppContext)
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
@@ -36,17 +36,17 @@ const UploadNftModal: any = ({ isOpen, setIsOpened }: any) => {
   })
 
   const onClose = () => {
-    setIsOpened(false)
+    setIsOpen(false)
   }
 
   console.log(isOpen, 'uploda nft modal')
 
   return (
     <>
-    <p>dewfewfwfwff</p>
+    <p></p>
       {true && (
         <>
-          <Modal opened={true} onClose={onClose} title="Introduce yourself!">
+          <Modal opened={isOpen} onClose={onClose} title="Introduce yourself!">
             <form onSubmit={form.onSubmit((values) => console.log(values))}>
               <TextInput
                 id="name"

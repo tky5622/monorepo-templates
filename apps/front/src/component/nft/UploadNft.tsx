@@ -4,12 +4,12 @@ import RoundButton from '../shared/RoundButton'
 import UploadNftModal from './UploadNftModal'
 
 const UploadNFTButton = () => {
-  const [isOpen, setIsOpened] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
   console.log(isOpen, 'isOpen')
   return (
     <div>
-      <UploadNftModal isOpen={isOpen} setIsOpened={setIsOpened} />
-      <RoundButton onClick={() => setIsOpened(true)} />
+      <UploadNftModal isOpen={isOpen} setIsOpen={setIsOpen} />
+      <RoundButton onClick={() => setIsOpen(true)} />
     </div>
   )
 }
