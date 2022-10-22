@@ -24,13 +24,24 @@ interface CardWithStatsProps {
   image: string;
   title: string;
   description: string;
-  stats: {
+  stats?: {
     title: string;
     value: string;
   }[];
 }
 
-export function NftCard({ image, title, description, stats }: any) {
+const stats = [
+  {
+    title: 'stinrg',
+    value: 'string'
+  },
+    {
+    title: 'stinrg',
+    value: 'string'
+  }
+]
+
+export function NftCard({ image, title, description }: CardWithStatsProps) {
   const { classes } = useStyles();
 
   const items = stats.map((stat: any) => (

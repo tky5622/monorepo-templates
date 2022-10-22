@@ -20,11 +20,5 @@
     "files": [
       "static/chunks/node_modules_web3modal_ui_dist_index_js.js"
     ]
-  },
-  "editor.tsx -> ../component/editor/UE5": {
-    "id": "editor.tsx -> ../component/editor/UE5",
-    "files": [
-      "static/chunks/src_component_editor_UE5_tsx.js"
-    ]
   }
 }

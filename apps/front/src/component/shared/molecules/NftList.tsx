@@ -44,68 +44,43 @@ const data = [
     image: 'string',
     title: 'strom',
     description: 'string',
-    stats: [{
-    title: 'string',
-    value: 'string;'
-  }, {
-    title: 'string',
-    value: 'string;'
-  }]},
+ },
   {
     image: 'string',
     title: 'strom',
     description: 'string',
-    stats: [{
-    title: 'string',
-    value: 'string;'
-  }]},    {
+ },
+  {
     image: 'string',
     title: 'strom',
     description: 'string',
-    stats: [{
-    title: 'string',
-    value: 'string;'
-  }]},    {
+ },
+  {
     image: 'string',
     title: 'strom',
     description: 'string',
-    stats: [{
-    title: 'string',
-    value: 'string;'
-  }]},    {
+ },
+  {
     image: 'string',
     title: 'strom',
     description: 'string',
-    stats: [{
-    title: 'string',
-    value: 'string;'
-  }]},    {
+ },
+  {
     image: 'string',
     title: 'strom',
     description: 'string',
-    stats: {
-    title: 'string',
-    value: 'string;'
-  }},
-    {
+ },
+  {
     image: 'string',
     title: 'strom',
     description: 'string',
-    stats: [{
-    title: 'string',
-    value: 'string;'
-  }]},
-    {
+ },
+  {
     image: 'string',
     title: 'strom',
     description: 'string',
-    stats: [
-      {
-    title: 'string',
-    value: 'string;'
-     }
-    ]
-  }
+ },
+ 
 ]
 
 export function NftList() {

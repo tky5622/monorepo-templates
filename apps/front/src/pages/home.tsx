@@ -2,6 +2,7 @@ import type { NextPage } from 'next'
 // import Head from 'next/head'
 // import Image from 'next/image'
 // import styles from '../styles/Home.module.css'
+import { FreatureSection } from '../component/home/FeatureSection'
 import { HeroBullets } from '../component/home/HeroBullets'
 import { UsersRolesTable } from '../component/home/TopUserList'
 import { CardsCarousel } from '../component/shared/molecules/CardList'
@@ -13,6 +14,7 @@ const Home: NextPage = () => {
       <CardsCarousel/>
       <UsersRolesTable/>
       <NftList/>
+      <FreatureSection/>
     </>
   )
 }
