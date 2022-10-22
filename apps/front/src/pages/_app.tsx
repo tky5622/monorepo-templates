@@ -2,7 +2,7 @@ import { ApolloProvider } from '@apollo/client'
 import {
   ColorScheme,
   ColorSchemeProvider,
-  MantineProvider
+  MantineProvider,
 } from '@mantine/core'
 import { NextPage } from 'next'
 import { AppProps } from 'next/app'

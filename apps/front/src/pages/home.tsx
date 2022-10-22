@@ -11,11 +11,11 @@ import NoSSR from '../component/shared/NoSSR'
 const Home: NextPage = () => {
   return (
     <NoSSR>
-      <HeroBullets/>
-      <CardsCarousel/>
-      <UsersRolesTable/>
-      <NftList/>
-      <FreatureSection/>
+      <HeroBullets />
+      <CardsCarousel />
+      <UsersRolesTable />
+      <NftList />
+      <FreatureSection />
     </NoSSR>
   )
 }

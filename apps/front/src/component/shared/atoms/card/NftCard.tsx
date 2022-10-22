@@ -1,8 +1,16 @@
-import { Card, createStyles, Group, Image, RingProgress, Text } from '@mantine/core';
+import {
+  Card,
+  createStyles,
+  Group,
+  Image,
+  RingProgress,
+  Text,
+} from '@mantine/core'
 
 const useStyles = createStyles((theme) => ({
   card: {
-    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
+    backgroundColor:
+      theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
   },
 
   footer: {
@@ -18,31 +26,31 @@ const useStyles = createStyles((theme) => ({
     fontFamily: `Greycliff CF, ${theme.fontFamily}`,
     lineHeight: 1,
   },
-}));
+}))
 
 interface CardWithStatsProps {
-  image: string;
-  title: string;
-  description: string;
+  image: string
+  title: string
+  description: string
   stats?: {
-    title: string;
-    value: string;
-  }[];
+    title: string
+    value: string
+  }[]
 }
 
 const stats = [
   {
     title: 'stinrg',
-    value: 'string'
+    value: 'string',
   },
-    {
+  {
     title: 'stinrg',
-    value: 'string'
-  }
+    value: 'string',
+  },
 ]
 
 export function NftCard({ image, title, description }: CardWithStatsProps) {
-  const { classes } = useStyles();
+  const { classes } = useStyles()
 
   const items = stats.map((stat: any) => (
     <div key={stat.title}>
@@ -53,7 +61,7 @@ export function NftCard({ image, title, description }: CardWithStatsProps) {
         {stat.value}
       </Text>
     </div>
-  ));
+  ))
 
   return (
     <Card withBorder p="lg" className={classes.card}>
@@ -77,5 +85,5 @@ export function NftCard({ image, title, description }: CardWithStatsProps) {
       </Text>
       <Card.Section className={classes.footer}>{items}</Card.Section>
     </Card>
-  );
+  )
 }

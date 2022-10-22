@@ -9,7 +9,7 @@ const UploadNFTButton = () => {
   return (
     <div>
       <UploadNftModal isOpen={isOpen} setIsOpen={setIsOpen} />
-      <RoundButton onClick={() => setIsOpen(true)} > Mint NFT </RoundButton>
+      <RoundButton onClick={() => setIsOpen(true)}> Mint NFT </RoundButton>
     </div>
   )
 }

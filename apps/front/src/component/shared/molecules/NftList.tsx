@@ -1,9 +1,7 @@
-
-
-import { Carousel } from '@mantine/carousel';
-import { createStyles, useMantineTheme } from '@mantine/core';
-import { useMediaQuery } from '@mantine/hooks';
-import { NftCard } from '../atoms/card/NftCard';
+import { Carousel } from '@mantine/carousel'
+import { createStyles, useMantineTheme } from '@mantine/core'
+import { useMediaQuery } from '@mantine/hooks'
+import { NftCard } from '../atoms/card/NftCard'
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -31,12 +29,12 @@ const useStyles = createStyles((theme) => ({
     fontWeight: 700,
     textTransform: 'uppercase',
   },
-}));
+}))
 
 interface CardProps {
-  image: string;
-  title: string;
-  category: string;
+  image: string
+  title: string
+  category: string
 }
 
 const data = [
@@ -44,53 +42,52 @@ const data = [
     image: 'string',
     title: 'strom',
     description: 'string',
- },
+  },
   {
     image: 'string',
     title: 'strom',
     description: 'string',
- },
+  },
   {
     image: 'string',
     title: 'strom',
     description: 'string',
- },
+  },
   {
     image: 'string',
     title: 'strom',
     description: 'string',
- },
+  },
   {
     image: 'string',
     title: 'strom',
     description: 'string',
- },
+  },
   {
     image: 'string',
     title: 'strom',
     description: 'string',
- },
+  },
   {
     image: 'string',
     title: 'strom',
     description: 'string',
- },
+  },
   {
     image: 'string',
     title: 'strom',
     description: 'string',
- },
- 
+  },
 ]
 
 export function NftList() {
-  const theme = useMantineTheme();
-  const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`);
+  const theme = useMantineTheme()
+  const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`)
   const slides = data.map((item) => (
     <Carousel.Slide key={item.title}>
       <NftCard {...item} />
     </Carousel.Slide>
-  ));
+  ))
 
   return (
     <Carousel
@@ -102,5 +99,5 @@ export function NftList() {
     >
       {slides}
     </Carousel>
-  );
+  )
 }

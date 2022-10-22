@@ -43,7 +43,7 @@ const UploadNftModal: any = ({ isOpen, setIsOpen }: any) => {
 
   return (
     <>
-    <p></p>
+      <p></p>
       {true && (
         <>
           <Modal opened={isOpen} onClose={onClose} title="Introduce yourself!">

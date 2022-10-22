@@ -14,10 +14,10 @@ const Project: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main >
+      <main>
         <NoSSR>
-          <NftDetails/>
-          <TabContainer/>
+          <NftDetails />
+          <TabContainer />
         </NoSSR>
       </main>
 

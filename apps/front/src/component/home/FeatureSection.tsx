@@ -7,8 +7,8 @@ import {
   Card,
   SimpleGrid,
   Container,
-} from '@mantine/core';
-import { IconGauge, IconUser, IconCookie } from '@tabler/icons';
+} from '@mantine/core'
+import { IconGauge, IconUser, IconCookie } from '@tabler/icons'
 
 const mockdata = [
   {
@@ -29,7 +29,7 @@ const mockdata = [
       'They’re popular, but they’re rare. Trainers who show them off recklessly may be targeted by thieves',
     icon: IconCookie,
   },
-];
+]
 
 const useStyles = createStyles((theme) => ({
   title: {
@@ -72,12 +72,18 @@ const useStyles = createStyles((theme) => ({
       marginTop: theme.spacing.sm,
     },
   },
-}));
+}))
 
 export function FreatureSection() {
-  const { classes, theme } = useStyles();
+  const { classes, theme } = useStyles()
   const features = mockdata.map((feature) => (
-    <Card key={feature.title} shadow="md" radius="md" className={classes.card} p="xl">
+    <Card
+      key={feature.title}
+      shadow="md"
+      radius="md"
+      className={classes.card}
+      p="xl"
+    >
       <feature.icon size={50} stroke={2} color={theme.fn.primaryColor()} />
       <Text size="lg" weight={500} className={classes.cardTitle} mt="md">
         {feature.title}
@@ -86,7 +92,7 @@ export function FreatureSection() {
         {feature.description}
       </Text>
     </Card>
-  ));
+  ))
   return (
     <Container size="lg" py="xl">
       <Group position="center">
@@ -99,14 +105,24 @@ export function FreatureSection() {
         Integrate effortlessly with any technology stack
       </Title>
 
-      <Text color="dimmed" className={classes.description} align="center" mt="md">
-        Every once in a while, you’ll see a Golbat that’s missing some fangs. This happens when
-        hunger drives it to try biting a Steel-type Pokémon.
+      <Text
+        color="dimmed"
+        className={classes.description}
+        align="center"
+        mt="md"
+      >
+        Every once in a while, you’ll see a Golbat that’s missing some fangs.
+        This happens when hunger drives it to try biting a Steel-type Pokémon.
       </Text>
 
-      <SimpleGrid cols={3} spacing="xl" mt={50} breakpoints={[{ maxWidth: 'md', cols: 1 }]}>
+      <SimpleGrid
+        cols={3}
+        spacing="xl"
+        mt={50}
+        breakpoints={[{ maxWidth: 'md', cols: 1 }]}
+      >
         {features}
       </SimpleGrid>
     </Container>
-  );
+  )
 }

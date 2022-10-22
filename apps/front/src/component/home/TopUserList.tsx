@@ -1,10 +1,24 @@
-import { Avatar, Badge, Group, ScrollArea, Select, Table, Text } from '@mantine/core';
+import {
+  Avatar,
+  Badge,
+  Group,
+  ScrollArea,
+  Select,
+  Table,
+  Text,
+} from '@mantine/core'
 
 interface UsersTableProps {
-  data: { avatar: string; name: string; job: string; email: string; role: string }[];
+  data: {
+    avatar: string
+    name: string
+    job: string
+    email: string
+    role: string
+  }[]
 }
 
-const rolesData = ['Manager', 'Collaborator', 'Contractor'];
+const rolesData = ['Manager', 'Collaborator', 'Contractor']
 
 const data1 = [
   {
@@ -14,48 +28,48 @@ const data1 = [
     email: 'string;',
     role: 'string',
   },
-    {
+  {
     avatar: 'string;',
     name: 'string;',
     job: 'string;',
     email: 'string;',
     role: 'string',
   },
-    {
+  {
     avatar: 'string;',
     name: 'string;',
     job: 'string;',
     email: 'string;',
     role: 'string',
   },
-    {
+  {
     avatar: 'string;',
     name: 'string;',
     job: 'string;',
     email: 'string;',
     role: 'string',
   },
-    {
+  {
     avatar: 'string;',
     name: 'string;',
     job: 'string;',
     email: 'string;',
     role: 'string',
   },
-    {
+  {
     avatar: 'string;',
     name: 'string;',
     job: 'string;',
     email: 'string;',
     role: 'string',
   },
-    {
+  {
     avatar: 'string;',
     name: 'string;',
     job: 'string;',
     email: 'string;',
     role: 'string',
-  }
+  },
 ]
 
 // {  }: UsersTableProps
@@ -90,7 +104,7 @@ export function UsersRolesTable() {
         )}
       </td>
     </tr>
-  ));
+  ))
 
   return (
     <ScrollArea>
@@ -106,5 +120,5 @@ export function UsersRolesTable() {
         <tbody>{rows}</tbody>
       </Table>
     </ScrollArea>
-  );
+  )
 }

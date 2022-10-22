@@ -1,8 +1,9 @@
-
-
-
-import { ActionIcon, Container, createStyles, Group, Text } from '@mantine/core';
-import { IconBrandInstagram, IconBrandTwitter, IconBrandYoutube } from '@tabler/icons';
+import { ActionIcon, Container, createStyles, Group, Text } from '@mantine/core'
+import {
+  IconBrandInstagram,
+  IconBrandTwitter,
+  IconBrandYoutube,
+} from '@tabler/icons'
 // import { MantineLogo } from '@mantine/ds';
 
 const useStyles = createStyles((theme) => ({
@@ -10,7 +11,10 @@ const useStyles = createStyles((theme) => ({
     marginTop: 120,
     paddingTop: theme.spacing.xl * 2,
     paddingBottom: theme.spacing.xl * 2,
-    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
+    backgroundColor:
+      theme.colorScheme === 'dark'
+        ? theme.colors.dark[6]
+        : theme.colors.gray[0],
     borderTop: `1px solid ${
       theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2]
     }`,
@@ -60,7 +64,10 @@ const useStyles = createStyles((theme) => ({
 
   link: {
     display: 'block',
-    color: theme.colorScheme === 'dark' ? theme.colors.dark[1] : theme.colors.gray[6],
+    color:
+      theme.colorScheme === 'dark'
+        ? theme.colors.dark[1]
+        : theme.colors.gray[6],
     fontSize: theme.fontSizes.sm,
     paddingTop: 3,
     paddingBottom: 3,
@@ -99,17 +106,17 @@ const useStyles = createStyles((theme) => ({
       marginTop: theme.spacing.xs,
     },
   },
-}));
+}))
 
 interface FooterLinksProps {
   data?: {
-    title: string;
-    links: { label: string; link: string }[];
-  }[];
+    title: string
+    links: { label: string; link: string }[]
+  }[]
 }
 
 export function FooterLinks({ data }: FooterLinksProps) {
-  const { classes } = useStyles();
+  const { classes } = useStyles()
 
   // const groups = data.map((group) => {
   //   const links = group.links.map((link, index) => (
@@ -161,5 +168,5 @@ export function FooterLinks({ data }: FooterLinksProps) {
         </Group>
       </Container>
     </footer>
-  );
+  )
 }

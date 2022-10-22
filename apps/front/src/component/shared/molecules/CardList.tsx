@@ -1,7 +1,14 @@
-import { Carousel } from '@mantine/carousel';
-import { Button, createStyles, Paper, Text, Title, useMantineTheme } from '@mantine/core';
-import { useMediaQuery } from '@mantine/hooks';
-import Router from 'next/router';
+import { Carousel } from '@mantine/carousel'
+import {
+  Button,
+  createStyles,
+  Paper,
+  Text,
+  Title,
+  useMantineTheme,
+} from '@mantine/core'
+import { useMediaQuery } from '@mantine/hooks'
+import Router from 'next/router'
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -29,21 +36,19 @@ const useStyles = createStyles((theme) => ({
     fontWeight: 700,
     textTransform: 'uppercase',
   },
-}));
+}))
 
 interface CardProps {
-  image: string;
-  title: string;
-  category: string;
+  image: string
+  title: string
+  category: string
 }
 
 function Card({ image, title, category }: CardProps) {
-  const { classes } = useStyles();
+  const { classes } = useStyles()
   const onClick = () => {
     Router.push('/project/1')
   }
-
-
 
   return (
     <Paper
@@ -65,7 +70,7 @@ function Card({ image, title, category }: CardProps) {
         See Project
       </Button>
     </Paper>
-  );
+  )
 }
 
 const data = [
@@ -105,16 +110,16 @@ const data = [
     title: 'Active volcanos reviews: travel at your own risk',
     category: 'nature',
   },
-];
+]
 
 export function CardsCarousel() {
-  const theme = useMantineTheme();
-  const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`);
+  const theme = useMantineTheme()
+  const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`)
   const slides = data.map((item) => (
     <Carousel.Slide key={item.title}>
       <Card {...item} />
     </Carousel.Slide>
-  ));
+  ))
 
   return (
     <Carousel
@@ -126,5 +131,5 @@ export function CardsCarousel() {
     >
       {slides}
     </Carousel>
-  );
+  )
 }
