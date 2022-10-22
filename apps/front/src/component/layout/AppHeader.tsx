@@ -3,6 +3,7 @@ import {
 } from '@mantine/core';
 import { MantineLogo } from '@mantine/ds';
 import { useDisclosure } from '@mantine/hooks';
+import Link from 'next/link';
 import WalletConnectContainer from '../walletConnect/WalletConnectContainer';
 
 const HEADER_HEIGHT = 60;
@@ -58,10 +59,20 @@ interface HeaderActionProps {
 
 const links = [
   {
-    link: 'string',
-    label: 'string',
-    links: [{ link: 'string;', label: 'string' }]
+    link: '',
+    label: 'explore',
+    links: [{ link: '3d models;', label: '3d models' }]
+  },
+  {
+    link: '/artists',
+    label: 'artists',
+  },
+    {
+    link: '/projects',
+    label: 'projects',
   }
+
+
 ]
 
 export function AppHeader() {
@@ -69,23 +80,27 @@ export function AppHeader() {
   const [opened, { toggle }] = useDisclosure(false);
   const items = links.map((link) => {
     const menuItems = link.links?.map((item) => (
-      <Menu.Item key={item.link}>{item.label}</Menu.Item>
+      <Menu.Item key={item.link}>
+        <Link href={link.link}>
+        {item.label}
+        </Link>
+        </Menu.Item>
     ));
 
     if (menuItems) {
       return (
         <Menu key={link.label} trigger="hover" exitTransitionDuration={0}>
           <Menu.Target>
-            <a
+            <Link
               href={link.link}
               className={classes.link}
-              onClick={(event) => event.preventDefault()}
+              // onClick={(event) => event.preventDefault()}
             >
               <Center>
                 <span className={classes.linkLabel}>{link.label}</span>
                 {/* <IconChevronDown size={12} stroke={1.5} /> */}
               </Center>
-            </a>
+            </Link>
           </Menu.Target>
           <Menu.Dropdown>{menuItems}</Menu.Dropdown>
         </Menu>
@@ -109,7 +124,9 @@ export function AppHeader() {
       <Container className={classes.inner} fluid>
         <Group>
           <Burger opened={opened} onClick={toggle} className={classes.burger} size="sm" />
-          <MantineLogo size={28} />
+          <Link href={'/home'}>
+            <MantineLogo size={28} />
+          </Link>
         </Group>
         <Group spacing={5} className={classes.links}>
           {items}

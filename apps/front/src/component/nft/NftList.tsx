@@ -7,14 +7,14 @@ import {
 } from "@mantine/core";
 import mockdata from "./mockdata";
 
-export function ArtistList() {
+export function NftList() {
   const theme = useMantineTheme();
   const secondaryColor =
     theme.colorScheme === "dark" ? theme.colors.dark[1] : theme.colors.gray[7];
 
-  const cards = mockdata.map((country) => (
-    <Grid.Col key={country.title}>
-    <Card shadow="sm"  style={{ minWidth: 240 }}>
+  const cards = mockdata.map((country, i) => (
+    <Grid.Col key={i} style={{ maxWidth: 300 }}>
+    <Card shadow="sm" key={country.title} >
       <Image
         src={country.image}
         height={160}
@@ -41,7 +41,7 @@ export function ArtistList() {
         )}
       </div>
 
-      <Text size="sm" style={{ color: secondaryColor, minHeight: 140 }}>
+      <Text size="sm" style={{ color: secondaryColor, height: 140 }}>
         {country.description}
       </Text>
 
@@ -63,7 +63,7 @@ export function ArtistList() {
   return (
     <div>
       <Container style={{ paddingTop: 40, paddingBottom: 40 }} size="md">
-        <Grid grow>
+        <Grid>
           {cards}
         </Grid>
       </Container>

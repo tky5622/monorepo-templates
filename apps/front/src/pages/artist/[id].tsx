@@ -1,11 +1,11 @@
 /* eslint-disable react/react-in-jsx-scope */
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import React from 'react'
+import { NftDetails } from '../../component/nft/NftDetails'
+import TabContainer from '../../component/nft/TabContainer'
 import UploadNFTButton from '../../component/nft/UploadNft'
 import NoSSR from '../../component/shared/NoSSR'
-
-const Project: NextPage = () => {
+const Artist: NextPage = () => {
   return (
     <div>
       <Head>
@@ -16,7 +16,8 @@ const Project: NextPage = () => {
 
       <main >
         <NoSSR>
-          <UploadNFTButton />
+          <NftDetails />
+          <TabContainer />
         </NoSSR>
       </main>
 
@@ -25,4 +26,4 @@ const Project: NextPage = () => {
   )
 }
 
-export default Project
+export default Artist
