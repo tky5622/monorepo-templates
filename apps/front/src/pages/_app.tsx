@@ -1,17 +1,17 @@
 import { ApolloProvider } from '@apollo/client'
-import { NextPage } from 'next'
-import { AppProps } from 'next/app'
-import Head from 'next/head'
-import { useState } from 'react'
-import client from '../../apollo-client'
-import '../styles/globals.css'
-import '../styles/player.css'
-import Layout from '../component/layout/Layout'
 import {
   ColorScheme,
   ColorSchemeProvider,
   MantineProvider
 } from '@mantine/core'
+import { NextPage } from 'next'
+import { AppProps } from 'next/app'
+import Head from 'next/head'
+import { useState } from 'react'
+import client from '../../apollo-client'
+import Layout from '../component/layout/Layout'
+import '../styles/globals.css'
+import '../styles/player.css'
 
 const App: NextPage<AppProps> = ({ Component, pageProps }) => {
   const [colorScheme, setColorScheme] = useState<ColorScheme>('dark')
@@ -42,6 +42,7 @@ const App: NextPage<AppProps> = ({ Component, pageProps }) => {
           >
             <Layout>
               <Component {...pageProps} />
+              <>fwefwefwefwefwefwffewfwefewedcvsdvsdfw</>
             </Layout>
           </ColorSchemeProvider>
         </MantineProvider>
