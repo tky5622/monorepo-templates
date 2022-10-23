@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { Group, LoadingOverlay, Modal } from '@mantine/core'
 
 // import { useAddress, useNFTCollection } from '@thirdweb-dev/react'
@@ -9,12 +10,13 @@ import { useForm } from '@mantine/form'
 // import { AppContext } from '../App'
 // import { NFT_COLLECTION_MUMBAI_CONTRACT } from '../config/contracts'
 import { ethers } from 'ethers'
-// import ShareModal from 'lit-share-modal-v3'
 import { address } from '../../abi/contractAddress'
 import ABI from '../../abi/nft.json'
+import LitShare from '../litShare/LitShare'
 import RoundButton from '../shared/RoundButton'
 import NftDropZone from './NftDropZone'
-
+// const ShareModal = require ('lit-share-modal-v3')
+// import ShareModal from 'lit-share-modal-v3'
 const mintNftHandler = async (values, setLoading, setIsOpen) => {
   console.log(values, 'mintNftHandler')
   try {
@@ -86,7 +88,6 @@ const UploadNftModal: any = ({ isOpen, setIsOpen }: any) => {
     <>
       <div></div>
       <div>
-        {/* {showShareModal && <ShareModal/>} */}
         {true && (
           <>
             <Modal
@@ -95,6 +96,9 @@ const UploadNftModal: any = ({ isOpen, setIsOpen }: any) => {
               title="Introduce yourself!"
             >
               <LoadingOverlay visible={isLoading} overlayBlur={2} />
+              <LitShare showShareModal={showShareModal} setShowShareModal={setShowShareModal}/>
+              {!showShareModal &&
+              <>
               <form
                 onSubmit={form.onSubmit((values) =>
                   mintNftHandler(values, setIsLoading, setIsOpen)
@@ -129,6 +133,8 @@ const UploadNftModal: any = ({ isOpen, setIsOpen }: any) => {
                   Upload
                 </RoundButton>
               </Group>
+              </>
+              }
             </Modal>
           </>
         )}

@@ -3,6 +3,7 @@
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { withNx } = require('@nrwl/next/plugins/with-nx')
+const withTM = require('next-transpile-modules')(['lit-share-modal-v3']);
 
 /**
  * @type {import('@nrwl/next/plugins/with-nx').WithNxOptions}
@@ -17,4 +18,4 @@ const nextConfig = {
   swcMinify: true,
 }
 
-module.exports = withNx(nextConfig)
+module.exports = withTM(withNx(nextConfig))
