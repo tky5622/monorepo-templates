@@ -1,15 +1,54 @@
-import { Group, Text, useMantineTheme } from '@mantine/core'
-import { IconUpload, IconPhoto, IconX } from '@tabler/icons'
-import { Dropzone, DropzoneProps, IMAGE_MIME_TYPE } from '@mantine/dropzone'
+/* eslint-disable no-constant-condition */
+/* eslint-disable @typescript-eslint/no-unused-expressions */
+/* eslint-disable react/no-unknown-property */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
+import { Group, Text, useMantineTheme } from '@mantine/core';
+import { Dropzone, DropzoneProps } from '@mantine/dropzone';
+import { IconPhoto, IconUpload, IconX } from '@tabler/icons';
+import React, { Suspense, useState } from 'react';
+// import { useLoader } from '@react-three/fiber'
+import { useGLTF } from '@react-three/drei';
+import { Canvas } from '@react-three/fiber';
 
+const ModelViewer = (model) => {
+  // const url = window.URL.createObjectURL(model)
+  // const reader = new FileReader();
+  const newModel = React.useCallback(() => {
+    const binaryData = [];
+    binaryData.push(model);
+    const newModel = window.URL.createObjectURL(new Blob(binaryData, { type: "model/gltf+json" }))
+    console.log(newModel)
+    return newModel
+  }, [model])
+  const {scene} = useGLTF(newModel)
+  console.log(scene, 'scene')
+
+  // const url = window.URL.createObjectURL(newModel)
+  // console.log(url)
+
+  return (
+    <>
+    <primitive object={scene} />
+    </>
+  )
+}
 export function NftDropZone(props: Partial<DropzoneProps>) {
   const theme = useMantineTheme()
+  const [model, setModel] = useState()
+  // newFunction();
+  // function newFunction() {
+  //   console.log(model.path);
+  // }
+
   return (
     <Dropzone
-      onDrop={(files) => console.log('accepted files', files)}
+      onDrop={(files) => {
+        console.log(files[0].type)
+        setModel(files[0])
+      }}
       onReject={(files) => console.log('rejected files', files)}
       maxSize={3 * 1024 ** 2}
-      accept={IMAGE_MIME_TYPE}
       {...props}
     >
       <Group
@@ -40,12 +79,27 @@ export function NftDropZone(props: Partial<DropzoneProps>) {
         </Dropzone.Idle>
 
         <div>
-          <Text size="xl" inline>
-            Drag images here or click to select files
-          </Text>
-          <Text size="sm" color="dimmed" inline mt={7}>
-            Attach as many files as you like, each file should not exceed 5mb
-          </Text>
+          {/* <Suspense fallback={null}>
+            <ModelViewer model={model} />
+          </Suspense> */}
+
+          {true ? (
+          <Canvas camera={{ position: [0, 0, 10] }}>
+                        <Suspense fallback={<p>loading..</p>}>
+                <ModelViewer model={model}/>
+            </Suspense>
+            </ Canvas >
+          ) : (
+            <>
+              <Text size="xl" inline>
+                Drag images here or click to select files
+              </Text>
+              <Text size="sm" color="dimmed" inline mt={7}>
+                Attach as many files as you like, each file should not exceed
+                5mb
+              </Text>
+            </>
+          )}
         </div>
       </Group>
     </Dropzone>

@@ -16,11 +16,11 @@ const modalConfig: ConfigOptions = {
     appName: 'web3Modal',
     autoConnect: true,
     chains: [
-      chains.mainnet,
-      chains.rinkeby,
+      // chains.mainnet,
+      // chains.rinkeby,
       // chains.avalanche,
       // chains.avalancheFuji,
-      chains.polygon,
+      // chains.polygon,
       chains.polygonMumbai,
     ],
     providers: [
