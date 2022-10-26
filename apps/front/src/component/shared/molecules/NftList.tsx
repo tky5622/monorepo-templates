@@ -39,12 +39,12 @@ interface CardProps {
 
 const data = [
   {
-    image: 'string',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSOI5UZ16RaoHzKShWhZ-YAND_8TFWexZLspraupcUkEFJX8hxwSxs1-SIrhl_YyWz1ppw&usqp=CAU',
     title: 'strom',
     description: 'string',
   },
   {
-    image: 'string',
+    image: 'https://nftevening.com/wp-content/uploads/2022/02/1_xx_C3BFw4CtUsQz8tCViGg.jpeg',
     title: 'strom',
     description: 'string',
   },

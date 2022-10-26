@@ -5,7 +5,7 @@ import {
   ScrollArea,
   Select,
   Table,
-  Text,
+  Text
 } from '@mantine/core'
 
 interface UsersTableProps {
@@ -22,14 +22,14 @@ const rolesData = ['Manager', 'Collaborator', 'Contractor']
 
 const data1 = [
   {
-    avatar: 'string;',
+    avatar: 'https://cdn.discordapp.com/attachments/1017794189452390440/1033661501321531402/image0.jpg;',
     name: 'string;',
     job: 'string;',
     email: 'string;',
     role: 'string',
   },
   {
-    avatar: 'string;',
+    avatar: 'https://cdn.discordapp.com/attachments/1017794189452390440/1033661622935371836/image0.jpg;',
     name: 'string;',
     job: 'string;',
     email: 'string;',

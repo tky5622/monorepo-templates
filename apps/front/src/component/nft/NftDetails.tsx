@@ -2,13 +2,8 @@ import {
   Button,
   Container,
   createStyles,
-  Group,
-  List,
-  Text,
-  ThemeIcon,
-  Title,
+  Group, Text, Title
 } from '@mantine/core'
-import { IconCheck } from '@tabler/icons'
 // import image from './image.svg';
 
 const useStyles = createStyles((theme) => ({
@@ -72,7 +67,7 @@ export function NftDetails() {
     <div>
       <Container>
         <div className={classes.inner}>
-          <div>testestes</div>
+          <img style={{maxHeight: 400, marginRight: 70}} src={"https://cdn.discordapp.com/attachments/1017794189452390440/1033661301207085056/image0.jpg"}/>
           <div className={classes.content}>
             <Title className={classes.title}>
               A <span className={classes.highlight}>modern</span> React <br />{' '}
@@ -83,30 +78,6 @@ export function NftDetails() {
               ever – Mantine includes more than 120 customizable components and
               hooks to cover you in any situation
             </Text>
-
-            <List
-              mt={30}
-              spacing="sm"
-              size="sm"
-              icon={
-                <ThemeIcon size={20} radius="xl">
-                  <IconCheck size={12} stroke={1.5} />
-                </ThemeIcon>
-              }
-            >
-              <List.Item>
-                <b>TypeScript based</b> – build type safe applications, all
-                components and hooks export types
-              </List.Item>
-              <List.Item>
-                <b>Free and open source</b> – all packages have MIT license, you
-                can use Mantine in any project
-              </List.Item>
-              <List.Item>
-                <b>No annoying focus ring</b> – focus ring will appear only when
-                user navigates with keyboard
-              </List.Item>
-            </List>
 
             <Group mt={30}>
               <Button radius="xl" size="md" className={classes.control}>

@@ -5,7 +5,7 @@ import {
   Paper,
   Text,
   Title,
-  useMantineTheme,
+  useMantineTheme
 } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
 import Router from 'next/router'
@@ -76,13 +76,13 @@ function Card({ image, title, category }: CardProps) {
 const data = [
   {
     image:
-      'https://images.unsplash.com/photo-1508193638397-1c4234db14d8?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=80',
+      'https://cdn.discordapp.com/attachments/1017794189452390440/1033661301207085056/image0.jpg',
     title: 'Best forests to visit in North America',
     category: 'nature',
   },
   {
     image:
-      'https://images.unsplash.com/photo-1559494007-9f5847c49d94?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=80',
+      'https://cdn.discordapp.com/attachments/1017794189452390440/1033661033279131698/image0.jpg',
     title: 'Hawaii beaches review: better than you think',
     category: 'beach',
   },

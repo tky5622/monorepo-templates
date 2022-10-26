@@ -6,7 +6,7 @@ import {
   List,
   Text,
   ThemeIcon,
-  Title,
+  Title
 } from '@mantine/core'
 import { IconCheck } from '@tabler/icons'
 // import image from './image.svg';
@@ -74,8 +74,8 @@ export function HeroBullets() {
         <div className={classes.inner}>
           <div className={classes.content}>
             <Title className={classes.title}>
-              A <span className={classes.highlight}>modern</span> React <br />{' '}
-              components library
+              A <span className={classes.highlight}>Decentralized</span> Metaverse <br />{' '}
+              3D contents library
             </Title>
             <Text color="dimmed" mt="md">
               Build fully functional accessible web applications faster than
@@ -121,6 +121,7 @@ export function HeroBullets() {
               </Button>
             </Group>
           </div>
+          <img style={{maxWidth: 400}}src="https://api.time.com/wp-content/uploads/2021/03/nft-art-2.jpg?quality=85&w=1600" />
           {/* <Image src={image.src} className={classes.image} /> */}
         </div>
       </Container>

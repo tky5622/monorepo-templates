@@ -4,7 +4,7 @@ import {
   Group,
   Image,
   RingProgress,
-  Text,
+  Text
 } from '@mantine/core'
 
 const useStyles = createStyles((theme) => ({
@@ -66,7 +66,7 @@ export function NftCard({ image, title, description }: CardWithStatsProps) {
   return (
     <Card withBorder p="lg" className={classes.card}>
       <Card.Section>
-        <Image src={image} alt={title} height={100} />
+        <Image src={image} alt={title} height={300} />
       </Card.Section>
 
       <Group position="apart" mt="xl">
