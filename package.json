@@ -78,6 +78,7 @@
     "ipfs-http-client": "^58.0.1",
     "lit-share-modal-v3": "^0.0.92",
     "next": "^12.3.1",
+    "next-compose-plugins": "^2.2.1",
     "next-transpile-modules": "^9.1.0",
     "nft.storage": "^7.0.0",
     "npm": "^8.19.2",
@@ -96,7 +97,8 @@
     "stylelint": "^14.13.0",
     "stylelint-config-standard": "^28.0.0",
     "tslib": "^2.3.0",
-    "web3modal": "^1.9.9"
+    "web3modal": "^1.9.9",
+    "xxx": "^0.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.19.3",
