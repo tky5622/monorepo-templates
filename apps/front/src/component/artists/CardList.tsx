@@ -1,15 +1,21 @@
 
 import {
-  Badge,
-  // Hr,
-  Button,
-  Card, Grid,
-  Image,
-  Text,
+  Avatar, Button, createStyles, Group, Text,
   useMantineTheme
 } from '@mantine/core';
+
 import { Profile } from '@use-lens/react-apollo';
 import Link from 'next/link';
+
+const useStyles = createStyles((theme) => ({
+  icon: {
+    color: theme.colorScheme === 'dark' ? theme.colors.dark[3] : theme.colors.gray[5],
+  },
+
+  name: {
+    fontFamily: `Greycliff CF, ${theme.fontFamily}`,
+  },
+}))
 
 
 export const CardList = ({ data }: { data : Profile[] }) => {
@@ -17,58 +23,43 @@ export const CardList = ({ data }: { data : Profile[] }) => {
   const secondaryColor =
     theme.colorScheme === 'dark' ? theme.colors.dark[1] : theme.colors.gray[7]
     console.log(data)
+  const { classes } = useStyles();
 
   return (
     <>
       {data && data.map((artist: Profile) => (
-      <Grid.Col key={artist.id}>
-      <Card shadow="sm" style={{ minWidth: 240 }}>
-        <Image
-          src={artist.coverPicture}
-          height={160}
-          alt={artist.id}
-          withPlaceholder
-        />
+      <Group noWrap>
+        <Avatar src={artist.picture} size={94} radius="md" />
+        <div>
+          <Text size="xs" sx={{ textTransform: 'uppercase' }} weight={700} color="dimmed">
+            {}
+          </Text>
 
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: 10,
-          }}
-        >
-            <Text weight={500}>{artist.name}</Text>
-            {artist.dispatcher && (
-            <Badge
-              color="red"
-              variant={theme.colorScheme === 'dark' ? 'light' : 'filled'}
-            >
-              sale
-            </Badge>
-          )}
+          <Text size="lg" weight={500} className={classes.name}>
+            {artist.name}
+          </Text>
+
+          <Group noWrap spacing={10} mt={3}>
+            <Text size="xs" color="dimmed">
+              {artist.bio}
+            </Text>
+          </Group>
+
         </div>
+            <Link href={`/artist/${artist.id}`}>
+              <Button
+                size="sm"
+                variant="light"
+                color="cyan"
+                fullWidth
+                style={{ marginTop: 10 }}
+              >
+                Book tour
+              </Button>
+            </Link>
 
-        <Text size="sm" style={{ color: secondaryColor, minHeight: 140 }}>
-            {artist.bio}
-        </Text>
-
-        {/* <Hr /> */}
-
-        <Link href={`/artist/${artist.id}`}>
-          <Button
-            size="sm"
-            variant="light"
-            color="cyan"
-            fullWidth
-            style={{ marginTop: 10 }}
-          >
-            Book tour
-          </Button>
-        </Link>
-      </Card>
-    </Grid.Col>
-    )
+      </Group>
+      )
   )}
     </>
   )

@@ -12,19 +12,6 @@ export function ArtistList() {
   const theme = useMantineTheme()
   const secondaryColor =
     theme.colorScheme === 'dark' ? theme.colors.dark[1] : theme.colors.gray[7]
-
-  // const test = apollo.usePublicationsLazyQuery()
-  // useProfilesQuery()
-
-  // which is can be used at profile page
-  // const { data: profilesData, error } = useProfilesQuery({
-  //   variables: {
-  //     request: {
-  //       ownedBy: [address]
-  //     }
-  //   }
-  // });
-
   const { loading, error, data } = useQuery(recommendProfiles);
   console.log(data, error, 'data')
   // data.
