@@ -4,9 +4,6 @@ import {
 } from '@mantine/core';
 import recommendProfiles from '../../graphql/queries/lens.query';
 import { CardList } from './CardList';
-// import {
-//   useProfilesQuery
-// } from '@use-lens/react-apollo'
 
 export function ArtistList() {
   const theme = useMantineTheme()
