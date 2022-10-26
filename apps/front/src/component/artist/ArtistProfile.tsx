@@ -2,6 +2,7 @@ import { useQuery } from '@apollo/client';
 import { Scalars } from '@use-lens/react-apollo';
 import { useRouter } from 'next/router';
 import { profileQueryById } from '../../graphql/queries/lens.profile-by-id.query';
+import { PUBLICATION_QUERY } from '../../graphql/queries/lens.publicaition.query';
 
 export function ArtistProfile() {
 
@@ -21,7 +22,17 @@ export function ArtistProfile() {
     },
   }
   )
+
+  const publication = useQuery(PUBLICATION_QUERY,
+    {
+      variables: {
+        id: profileId
+      },
+    }
+  )
+
   console.log(data)
+  console.log(publication?.data)
 
   return (
     <>
