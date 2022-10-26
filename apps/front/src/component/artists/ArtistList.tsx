@@ -1,3 +1,4 @@
+import { useQuery } from '@apollo/client';
 import {
   Badge,
   // Hr,
@@ -7,14 +8,34 @@ import {
   Grid,
   Image,
   Text,
-  useMantineTheme,
-} from '@mantine/core'
-import mockdata from './mockdata'
+  useMantineTheme
+} from '@mantine/core';
+import recommendProfiles from '../../graphql/queries/lens.query';
+import mockdata from './mockdata';
+// import {
+//   useProfilesQuery
+// } from '@use-lens/react-apollo'
 
 export function ArtistList() {
   const theme = useMantineTheme()
   const secondaryColor =
     theme.colorScheme === 'dark' ? theme.colors.dark[1] : theme.colors.gray[7]
+
+  // const test = apollo.usePublicationsLazyQuery()
+  // useProfilesQuery()
+
+  // which is can be used at profile page
+  // const { data: profilesData, error } = useProfilesQuery({
+  //   variables: {
+  //     request: {
+  //       ownedBy: [address]
+  //     }
+  //   }
+  // });
+
+  const { loading, error, data } = useQuery(recommendProfiles);
+  console.log(data, error, 'data')
+
 
   const cards = mockdata.map((country) => (
     <Grid.Col key={country.title}>
@@ -67,7 +88,9 @@ export function ArtistList() {
   return (
     <div>
       <Container style={{ paddingTop: 40, paddingBottom: 40 }} size="md">
-        <Grid grow>{cards}</Grid>
+        {loading ? <p> loading </p>
+        : <Grid grow>{cards}</Grid>
+         }
       </Container>
     </div>
   )
