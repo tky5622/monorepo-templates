@@ -1,5 +1,5 @@
 
-import { createStyles, Group, useMantineTheme } from '@mantine/core';
+import { createStyles, Group } from '@mantine/core';
 
 import { Profile } from '@use-lens/react-apollo';
 import { ArtistCard } from './ArtistCard';
@@ -16,11 +16,10 @@ const useStyles = createStyles((theme) => ({
 
 
 export const CardList = ({ data }: { data : Profile[] }) => {
-  const theme = useMantineTheme()
-  const secondaryColor =
-    theme.colorScheme === 'dark' ? theme.colors.dark[1] : theme.colors.gray[7]
-    console.log(data)
-  const { classes } = useStyles();
+  // const theme = useMantineTheme()
+  // const secondaryColor =
+  //   theme.colorScheme === 'dark' ? theme.colors.dark[1] : theme.colors.gray[7]
+  //   console.log(data)
 
   return (
      <>

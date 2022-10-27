@@ -3,8 +3,9 @@ import {
   Avatar, Button, createStyles, Group, Text
 } from '@mantine/core';
 
+import { ProfileMedia } from '@use-lens/react-apollo';
+import { Maybe } from 'graphql/jsutils/Maybe';
 import Link from 'next/link';
-
 const useStyles = createStyles((theme) => ({
   icon: {
     color: theme.colorScheme === 'dark' ? theme.colors.dark[3] : theme.colors.gray[5],
@@ -17,9 +18,9 @@ const useStyles = createStyles((theme) => ({
 
 
 type ArtistCardProps = {
-  picture: string,
-  name: string ,
-  bio: string ,
+  picture?: Maybe<ProfileMedia> | undefined,
+  name?: Maybe<string> | undefined ,
+  bio?: Maybe<string> | undefined ,
   id: string
 }
 
