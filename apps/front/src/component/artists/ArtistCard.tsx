@@ -16,9 +16,14 @@ const useStyles = createStyles((theme) => ({
 }))
 
 
+type ArtistCardProps = {
+  picture: string,
+  name: string ,
+  bio: string ,
+  id: string
+}
 
-
-export const ArtistCard = ({ picture, name, bio, id }: any) => {
+export const ArtistCard = ({ picture, name, bio, id }: ArtistCardProps) => {
   const { classes } = useStyles()
   return (
     <>
