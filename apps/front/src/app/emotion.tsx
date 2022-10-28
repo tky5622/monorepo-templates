@@ -16,6 +16,7 @@ export default function RootStyleRegistry({ children }: { children: React.ReactN
     />
   ));
 
+
   return (
     <CacheProvider value={cache}>
       <MantineProvider theme={{ colorScheme: 'dark' }}  withGlobalStyles withNormalizeCSS>
