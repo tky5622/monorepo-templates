@@ -1,4 +1,4 @@
-'use Client'
+'use client'
 import { Carousel } from '@mantine/carousel'
 import {
   Button,
