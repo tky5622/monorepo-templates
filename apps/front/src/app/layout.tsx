@@ -1,20 +1,19 @@
+'use client'
+/* eslint-disable no-constant-condition */
 import { ApolloProvider } from '@apollo/client'
-import {
-  ColorScheme,
-  ColorSchemeProvider,
-  MantineProvider
-} from '@mantine/core'
-import React, { PropsWithChildren, useState } from 'react'
+import { ColorScheme, ColorSchemeProvider } from '@mantine/core'
+import React, { PropsWithChildren } from 'react'
 import client from '../../apollo-client'
 import Layout from '../component/layout/Layout'
 import '../styles/globals.css'
 import '../styles/player.css'
+import RootStyleRegistry from './emotion'
 
 const RootLayout: React.FC<PropsWithChildren> = ({ children }) => {
-  const [colorScheme, setColorScheme] = useState<ColorScheme>('dark')
+  // const [colorScheme, setColorScheme] = useState<ColorScheme>('dark')
 
   const toggleColorScheme = (value?: ColorScheme) =>
-    setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'))
+    console.log(value || ('dark' === 'dark' ? 'dark' : 'dark'))
 
   return (
     <html lang="en">
@@ -22,24 +21,19 @@ const RootLayout: React.FC<PropsWithChildren> = ({ children }) => {
         <title>Next.js</title>
       </head>
       <body>
-      <ApolloProvider client={client}>
-        <MantineProvider
-          withGlobalStyles
-          withNormalizeCSS
-          theme={{
-            colorScheme,
-          }}
-        >
+          <RootStyleRegistry>
           <ColorSchemeProvider
-            colorScheme={colorScheme}
-            toggleColorScheme={toggleColorScheme}
+              colorScheme={'dark'}
+              toggleColorScheme={toggleColorScheme}
           >
+            <ApolloProvider client={client}>
             <Layout>
               {children}
             </Layout>
+            </ApolloProvider>
+
           </ColorSchemeProvider>
-        </MantineProvider>
-      </ApolloProvider>
+          </RootStyleRegistry>
       </body>
     </html>
   )

@@ -1,6 +1,8 @@
-import { Tabs } from '@mantine/core'
-import { UsersRolesTable } from '../home/TopUserList'
-import { ProjectNftListContainer } from './ProjectNftListContainer'
+"use client";
+
+import { Tabs } from '@mantine/core';
+import { UsersRolesTable } from '../home/TopUserList';
+import { ProjectNftListContainer } from './ProjectNftListContainer';
 
 function TabContainer() {
   return (

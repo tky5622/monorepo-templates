@@ -1,3 +1,4 @@
+'use client'
 import {
   Burger,
   Center,
@@ -5,13 +6,12 @@ import {
   createStyles,
   Group,
   Header,
-  Menu,
+  Menu
 } from '@mantine/core'
 import { MantineLogo } from '@mantine/ds'
 import { useDisclosure } from '@mantine/hooks'
 import Link from 'next/link'
 import WalletConnectContainer from '../walletConnect/WalletConnectContainer'
-
 const HEADER_HEIGHT = 60
 
 type AppHeaderProps = {
@@ -147,7 +147,7 @@ export function AppHeader() {
         <Group spacing={5} className={classes.links}>
           {items}
         </Group>
-        <WalletConnectContainer />
+          <WalletConnectContainer />
       </Container>
     </Header>
   )

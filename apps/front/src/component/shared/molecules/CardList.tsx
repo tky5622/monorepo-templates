@@ -1,3 +1,4 @@
+'use Client'
 import { Carousel } from '@mantine/carousel'
 import {
   Button,
@@ -5,11 +6,10 @@ import {
   Paper,
   Text,
   Title,
-  useMantineTheme,
+  useMantineTheme
 } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
-import Router from 'next/router'
-
+import {useRouter} from 'next/navigation'
 const useStyles = createStyles((theme) => ({
   card: {
     height: 440,
@@ -46,6 +46,7 @@ interface CardProps {
 
 function Card({ image, title, category }: CardProps) {
   const { classes } = useStyles()
+  const Router = useRouter()
   const onClick = () => {
     Router.push('/project/1')
   }

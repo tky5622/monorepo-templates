@@ -1,3 +1,6 @@
+// app/page.tsx
+/** @jsxImportSource @emotion/react */
+
 import { AppShell } from '@mantine/core'
 import React from 'react'
 import WalletConnectModal from '../walletConnect/WalletConnectModal'

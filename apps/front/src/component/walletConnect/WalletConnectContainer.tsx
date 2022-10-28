@@ -1,3 +1,4 @@
+'use client'
 import { Button } from '@mantine/core'
 import { useAccount, useConnectModal } from '@web3modal/react'
 

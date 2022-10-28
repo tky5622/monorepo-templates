@@ -1,9 +1,12 @@
+
+"use client";
+
 /* eslint-disable react/react-in-jsx-scope */
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import { NftDetails } from '../../../component/nft/NftDetails'
-import TabContainer from '../../../component/nft/TabContainer'
-import NoSSR from '../../../component/shared/NoSSR'
+import type { NextPage } from 'next';
+import Head from 'next/head';
+import { NftDetails } from '../../../component/nft/NftDetails';
+import TabContainer from '../../../component/nft/TabContainer';
+import NoSSR from '../../../component/shared/NoSSR';
 const Project: NextPage = () => {
   return (
     <div>

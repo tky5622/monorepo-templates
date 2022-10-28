@@ -75,7 +75,7 @@ export function ProfileCard({
 
 type ProfileStatProps = {
   value?: number
-  label: String
+  label: string
 }
 
 const ProfileStat: React.FC<ProfileStatProps> = ({ value, label }) => {

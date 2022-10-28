@@ -1,3 +1,5 @@
+'use client'
+
 import { chains, providers } from '@web3modal/ethereum'
 import type { ConfigOptions } from '@web3modal/react'
 import { Web3Modal } from '@web3modal/react'
