@@ -1,5 +1,5 @@
 
-import { createStyles, Group } from '@mantine/core';
+import { createStyles, Stack } from '@mantine/core';
 
 import { Profile } from '@use-lens/react-apollo';
 import { ArtistCard } from './ArtistCard';
@@ -26,9 +26,11 @@ export const CardList = ({ data }: { data : Profile[] }) => {
     {
 
       data && data.map((artist: Profile, i) => (
-      <Group noWrap key={i}>
-          <ArtistCard  picture={artist.picture} name={artist.name} bio={artist.bio} id={artist.id}/>
-      </Group>
+        <Stack key={i} spacing="xs" sx={(theme) => ({ backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0], height: 300 })}>
+          {/* <Group noWrap> */}
+            <ArtistCard  picture={artist.picture} name={artist.name} bio={artist.bio} id={artist.id}/>
+          {/* </Group> */}
+        </Stack>
     )
     )}
     </>

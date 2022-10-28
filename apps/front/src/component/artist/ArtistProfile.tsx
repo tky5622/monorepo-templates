@@ -3,18 +3,12 @@ import { Scalars } from '@use-lens/react-apollo';
 import { useRouter } from 'next/router';
 import { profileQueryById } from '../../graphql/queries/lens.profile-by-id.query';
 import { PUBLICATION_QUERY } from '../../graphql/queries/lens.publicaition.query';
-
+import { ProfileCard } from './ProfileCard';
+import { Profile } from '@use-lens/react-apollo';
 export function ArtistProfile() {
 
   const router = useRouter()
   const profileId = router.query.id as Scalars['ProfileId']
-  // console.log(profileId)
-  // const { loading, data } = useProfileQuery({variables:{
-  //     request: {
-  //       profileId
-  //     }
-  // }})
-  console.log(profileId)
   const { loading, data } = useQuery(profileQueryById,
     {
       variables: {
@@ -38,9 +32,9 @@ export function ArtistProfile() {
     <>
     { loading ? <p>loading</p> :
       <>
+          <ProfileCard coverPicture={} picture={} name={} bio={} id={}  />
       </>
       }
     </>
-
   );
 }

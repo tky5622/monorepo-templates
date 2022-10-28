@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/client';
 import {
-  Container, Grid, useMantineTheme
+  Container, useMantineTheme
 } from '@mantine/core';
 import recommendProfiles from '../../graphql/queries/lens.query';
 import { CardList } from './CardList';
@@ -18,9 +18,7 @@ export function ArtistList() {
       <Container style={{ paddingTop: 40, paddingBottom: 40 }} size="md">
         {loading ? <p> loading </p>
           :
-        <Grid grow>
           <CardList data={data.recommendedProfiles} />
-        </Grid>
           }
       </Container>
     </div>
