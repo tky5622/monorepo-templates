@@ -17,6 +17,9 @@ const nextConfig = {
   },
   reactStrictMode: true,
   swcMinify: true,
+  experimental: {
+    appDir: true
+  }
 }
 const plugins = [
   // [withTM] // no go - will fail the nx serve and nx build

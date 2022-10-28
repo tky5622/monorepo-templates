@@ -1,11 +1,5 @@
 import {
-  Avatar,
-  Badge,
-  Group,
-  ScrollArea,
-  Select,
-  Table,
-  Text
+  ScrollArea, Table
 } from '@mantine/core'
 import { useRouter } from 'next/router'
 import { useFollowers } from '../../hooks/useLens/useLens'
