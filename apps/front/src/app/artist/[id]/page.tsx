@@ -4,7 +4,6 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 // import UploadNFTButton from '../../component/nft/UploadNft'
 import { ArtistProfile } from '../../../component/artist/ArtistProfile'
-import NoSSR from '../../../component/shared/NoSSR'
 const Artist: NextPage = () => {
   return (
     <div>
@@ -14,9 +13,7 @@ const Artist: NextPage = () => {
       </Head>
 
       <main>
-        <NoSSR>
           <ArtistProfile />
-        </NoSSR>
       </main>
 
       <footer></footer>

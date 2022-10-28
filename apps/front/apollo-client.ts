@@ -1,4 +1,5 @@
 // ./apollo-client.js
+'use client'
 
 import { ApolloClient, InMemoryCache } from '@apollo/client'
 

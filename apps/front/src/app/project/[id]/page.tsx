@@ -6,7 +6,6 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import { NftDetails } from '../../../component/nft/NftDetails';
 import TabContainer from '../../../component/nft/TabContainer';
-import NoSSR from '../../../component/shared/NoSSR';
 const Project: NextPage = () => {
   return (
     <div>
@@ -16,10 +15,8 @@ const Project: NextPage = () => {
       </Head>
 
       <main>
-        <NoSSR>
           <NftDetails />
           <TabContainer />
-        </NoSSR>
       </main>
 
       <footer></footer>

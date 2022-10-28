@@ -4,7 +4,7 @@ import {
   Group,
   Image,
   RingProgress,
-  Text,
+  Text
 } from '@mantine/core'
 
 const useStyles = createStyles((theme) => ({
@@ -40,20 +40,20 @@ interface CardWithStatsProps {
 
 const stats = [
   {
-    title: 'stinrg',
-    value: 'string',
+    title: '222222222222',
+    value: '33333333333333',
   },
   {
-    title: 'stinrg',
-    value: 'string',
+    title: 'ddddddddddddd',
+    value: 'eeeeeeeeeeeeeeeee',
   },
 ]
 
 export function NftCard({ image, title, description }: CardWithStatsProps) {
   const { classes } = useStyles()
 
-  const items = stats.map((stat: any) => (
-    <div key={stat.title}>
+  const items = stats.map((stat: any, i) => (
+    <div key={i}>
       <Text size="xs" color="dimmed">
         {stat.title}
       </Text>

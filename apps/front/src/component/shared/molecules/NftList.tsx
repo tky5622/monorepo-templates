@@ -85,8 +85,8 @@ const data = [
 export function NftList() {
   const theme = useMantineTheme()
   const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`)
-  const slides = data.map((item) => (
-    <Carousel.Slide key={item.title}>
+  const slides = data.map((item, i) => (
+    <Carousel.Slide key={i}>
       <NftCard {...item} />
     </Carousel.Slide>
   ))
