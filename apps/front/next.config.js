@@ -3,7 +3,7 @@
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { withNx } = require('@nrwl/next/plugins/with-nx')
-const withTM = require('next-transpile-modules')(['lit-share-modal-v3'])
+// const withTM = require('next-transpile-modules')(['lit-share-modal-v3'])
 // const withPlugins = require('next-compose-plugins')
 
 /**
