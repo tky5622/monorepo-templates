@@ -88,6 +88,7 @@
     "react-3d-viewer": "^1.0.12",
     "react-dom": "18.2.0",
     "react-icons": "^4.6.0",
+    "react-lines-ellipsis": "^0.15.3",
     "react-three-fiber": "^6.0.13",
     "reflect-metadata": "^0.1.13",
     "regenerator-runtime": "0.13.7",

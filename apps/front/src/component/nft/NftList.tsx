@@ -7,22 +7,48 @@ import {
   Grid,
   Image,
   Text,
-  useMantineTheme,
+  useMantineTheme
 } from '@mantine/core'
-import mockdata from './mockdata'
+import { Publication } from '@use-lens/react-apollo'
 
-export function NftList() {
+type NftListProps = {
+  publications?: Publication[]
+}
+
+export function NftList({ publications }: NftListProps){
+  console.log(publications, 'publuications ')
   const theme = useMantineTheme()
   const secondaryColor =
     theme.colorScheme === 'dark' ? theme.colors.dark[1] : theme.colors.gray[7]
 
-  const cards = mockdata.map((country, i) => (
+//  publications[0].createdAt
+//   publications[0].id
+//   publications[0].metadata.cover
+//   publications[0].stats
+//   publications[0].reaction
+//   publications[0].profile
+//   publications[0].onChainContentURI
+//   publications[0].appId
+//   publications[0].__typename
+
+
+
+
+
+
+
+
+
+
+
+  const cards = publications?.map((publication, i) => (
+    <>{publication.__typename === 'Post' &&
     <Grid.Col key={i} style={{ maxWidth: 300 }}>
-      <Card shadow="sm" key={country.title}>
+      <Card shadow="sm" key={publication.id}>
         <Image
-          src={country.image}
+            src={publication?.metadata?.media[0]?.original?.url?.replace("ipfs://", "https://ipfs.io/ipfs/")}
           height={160}
-          alt={country.title}
+          alt={publication.metadata.description}
           withPlaceholder
         />
 
@@ -34,19 +60,19 @@ export function NftList() {
             marginBottom: 10,
           }}
         >
-          <Text weight={500}>{country.title}</Text>
-          {country.sale && (
+          <Text weight={500}>{publication.metadata.__typename}</Text>
+          {publication.reaction && (
             <Badge
               color="red"
               variant={theme.colorScheme === 'dark' ? 'light' : 'filled'}
             >
-              sale
+              {publication.stats.totalUpvotes}
             </Badge>
           )}
         </div>
 
-        <Text size="sm" style={{ color: secondaryColor, height: 140 }}>
-          {country.description}
+          <Text size="sm" style={{ color: secondaryColor, height: 140, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace:'pre-wrap' }}>
+          {publication.metadata.description}
         </Text>
 
         {/* <Hr /> */}
@@ -62,6 +88,7 @@ export function NftList() {
         </Button>
       </Card>
     </Grid.Col>
+    }</>
   ))
 
   return (

@@ -15,7 +15,7 @@ const useStyles = createStyles((theme) => ({
 }))
 
 
-export const CardList = ({ data }: { data : Profile[] }) => {
+export const CardList = ({ data }: { data? : Profile[] }) => {
   // const theme = useMantineTheme()
   // const secondaryColor =
   //   theme.colorScheme === 'dark' ? theme.colors.dark[1] : theme.colors.gray[7]
