@@ -238,3 +238,11 @@ export class Transfer extends Entity {
     this.set('tokenId', Value.fromBigInt(value))
   }
 }
+function assert(arg0: boolean, arg1: string) {
+  throw new Error('Function not implemented.')
+}
+
+function changetype<T>(arg0: Entity): Approval {
+  throw new Error('Function not implemented.')
+}
+

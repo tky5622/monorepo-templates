@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import {
   Button,
   Container,
@@ -6,7 +7,6 @@ import {
   Text,
   Title
 } from '@mantine/core'
-import Image from 'next/image'
 // import image from './image.svg';
 
 const useStyles = createStyles((theme) => ({
@@ -70,9 +70,9 @@ export function NftDetails() {
     <div>
       <Container>
         <div className={classes.inner}>
-          <Image
+          <img
             style={{ maxHeight: 400, marginRight: 70 }}
-            alt={'fixed image'}
+            alt={'tets'}
             src={
               'https://cdn.discordapp.com/attachments/1017794189452390440/1033661301207085056/image0.jpg'
             }
