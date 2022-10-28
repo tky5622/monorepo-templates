@@ -5,7 +5,7 @@
 // @ts-nocheck
 import webRtcPlayer from './webRtcPlayer'
 
-const kbEvent = document.createEvent('KeyboardEvent')
+const kbEvent = document && document.createEvent('KeyboardEvent')
 let webRtcPlayerObj = null
 const print_stats = false
 const print_inputs = false
@@ -158,10 +158,10 @@ function scanGamepads() {
   }
 }
 
-const script = document.createElement('script')
+const script = document && document.createElement('script')
 script.src = 'https://code.jquery.com/jquery-3.4.1.min.js'
 script.type = 'text/javascript'
-document.getElementsByTagName('head')[0].appendChild(script)
+document && document.getElementsByTagName('head')[0].appendChild(script)
 
 const haveEvents = 'GamepadEvent' in window
 const haveWebkitEvents = 'WebKitGamepadEvent' in window
@@ -1156,7 +1156,7 @@ function setupStats() {
       const receivedBytesMeasurement = dataMeasurements[index]
     }
 
-    const qualityStatus = document.getElementById('qualityStatus')
+    const qualityStatus = document && document.getElementById('qualityStatus')
 
     // "blinks" quality status element for 1 sec by making it transparent, speed = number of blinks
     const blinkQualityStatus = function (speed: number) {
@@ -1251,7 +1251,7 @@ function setupStats() {
     }</div>`
     statsText += `<div style="color: ${color}">Video Quantization Parameter: ${VideoEncoderQP}</div>`
 
-    const statsDiv = document.getElementById('stats')
+    const statsDiv = document && document.getElementById('stats')
     statsDiv.innerHTML = statsText
 
     if (print_stats) {
