@@ -23,7 +23,7 @@ const nextConfig = {
 }
 // const plugins = [
 //   // [withTM] // no go - will fail the nx serve and nx build
-//   [withNx, withTM],
+//   [withNx, withTM]
 // ]
 
 module.exports = withNx(nextConfig)
