@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-var-requires */
+// @ts-ignore
 import ShareModal from 'lit-share-modal-v3'
 // const ShareModal = require('lit-share-modal-v3')
 // import './App.css'
 
-const LitShare = ({ showShareModal, setShowShareModal }) => {
+const LitShare = ({ showShareModal, setShowShareModal }: any) => {
   const onUnifiedAccessControlConditionsSelected = (shareModalOutput: any) => {
     // do things with share modal output
   }

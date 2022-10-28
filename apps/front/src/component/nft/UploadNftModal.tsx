@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { Group, LoadingOverlay, Modal } from '@mantine/core'
 
@@ -17,7 +18,7 @@ import RoundButton from '../shared/RoundButton'
 import NftDropZone from './NftDropZone'
 // const ShareModal = require ('lit-share-modal-v3')
 // import ShareModal from 'lit-share-modal-v3'
-const mintNftHandler = async (values, setLoading, setIsOpen) => {
+const mintNftHandler = async (values: any, setLoading: any, setIsOpen: any) => {
   console.log(values, 'mintNftHandler')
   try {
     const { ethereum } = window
