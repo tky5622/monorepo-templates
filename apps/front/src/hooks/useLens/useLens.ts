@@ -1,11 +1,11 @@
 import { useQuery } from '@apollo/client'
-import { Publication, Scalars } from '@use-lens/react-apollo'
+import { Follower, Maybe, ProfileMedia, Publication, Scalars } from '@use-lens/react-apollo'
 import React from 'react'
+import { FOLLOWER_QUERY } from '../../graphql/lens.followers.query'
 import { PUBLICATION_QUERY } from '../../graphql/queries/lens.publicaition.query'
 
 
-
-export const useExtractUrl = (picture: any) => {
+export const useExtractUrl = (picture?: Maybe<ProfileMedia>) => {
   const url = React.useMemo(() => {
     if (picture) {
       if (picture.__typename === 'MediaSet') {
@@ -33,5 +33,22 @@ export const usePublications = (profileId: Scalars['ProfileId']) => {
   })
 
   return { data, loading , error }
+}
 
+
+export type FollowersQuery = {
+  followers: {
+    items: Follower[]
+  }
+}
+
+
+export const useFollowers = (profileId: Scalars['ProfileId'] ) => {
+  const { data, loading, error } = useQuery<FollowersQuery>(FOLLOWER_QUERY, {
+        variables: {
+      id: profileId,
+    },
+  }
+  )
+  return { data, loading, error }
 }
