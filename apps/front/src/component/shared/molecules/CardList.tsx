@@ -5,7 +5,7 @@ import {
   Paper,
   Text,
   Title,
-  useMantineTheme
+  useMantineTheme,
 } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
 import Router from 'next/router'

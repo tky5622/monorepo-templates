@@ -14,7 +14,7 @@ const Artist: NextPage = () => {
 
       <main>
         <NoSSR>
-          <ArtistProfile/>
+          <ArtistProfile />
         </NoSSR>
       </main>
 

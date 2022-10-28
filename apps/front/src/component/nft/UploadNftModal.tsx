@@ -96,45 +96,48 @@ const UploadNftModal: any = ({ isOpen, setIsOpen }: any) => {
               title="Introduce yourself!"
             >
               <LoadingOverlay visible={isLoading} overlayBlur={2} />
-              <LitShare showShareModal={showShareModal} setShowShareModal={setShowShareModal}/>
-              {!showShareModal &&
-              <>
-              <form
-                onSubmit={form.onSubmit((values) =>
-                  mintNftHandler(values, setIsLoading, setIsOpen)
-                )}
-              >
-                <TextInput
-                  id="name"
-                  type="text"
-                  placeholder={'test'}
-                  {...form.getInputProps('name')}
-                />
-                <TextInput
-                  label={'Description'}
-                  id="description"
-                  type="text"
-                  {...form.getInputProps('description')}
-                />
-                <NftDropZone
-                  type={'file'}
-                  id={file}
-                  onChange={onChangeHandle}
-                  {...form.getInputProps('file')}
-                />
-              </form>
-              <Group>
-                <RoundButton onClick={onClose}>Close</RoundButton>
-                <RoundButton
-                  // isLoading={isLoading}
-                  type={'submit'}
-                  onClick={onClick}
-                >
-                  Upload
-                </RoundButton>
-              </Group>
-              </>
-              }
+              <LitShare
+                showShareModal={showShareModal}
+                setShowShareModal={setShowShareModal}
+              />
+              {!showShareModal && (
+                <>
+                  <form
+                    onSubmit={form.onSubmit((values) =>
+                      mintNftHandler(values, setIsLoading, setIsOpen)
+                    )}
+                  >
+                    <TextInput
+                      id="name"
+                      type="text"
+                      placeholder={'test'}
+                      {...form.getInputProps('name')}
+                    />
+                    <TextInput
+                      label={'Description'}
+                      id="description"
+                      type="text"
+                      {...form.getInputProps('description')}
+                    />
+                    <NftDropZone
+                      type={'file'}
+                      id={file}
+                      onChange={onChangeHandle}
+                      {...form.getInputProps('file')}
+                    />
+                  </form>
+                  <Group>
+                    <RoundButton onClick={onClose}>Close</RoundButton>
+                    <RoundButton
+                      // isLoading={isLoading}
+                      type={'submit'}
+                      onClick={onClick}
+                    >
+                      Upload
+                    </RoundButton>
+                  </Group>
+                </>
+              )}
             </Modal>
           </>
         )}

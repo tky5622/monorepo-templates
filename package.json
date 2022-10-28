@@ -143,6 +143,7 @@
     "@types/node": "18.7.23",
     "@types/react": "18.0.21",
     "@types/react-dom": "18.0.6",
+    "@types/react-lines-ellipsis": "^0.15.1",
     "@typescript-eslint/eslint-plugin": "^5.39.0",
     "@typescript-eslint/parser": "^5.36.1",
     "autoprefixer": "^10.4.12",

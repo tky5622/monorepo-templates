@@ -1,32 +1,30 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import ShareModal from 'lit-share-modal-v3';
+import ShareModal from 'lit-share-modal-v3'
 // const ShareModal = require('lit-share-modal-v3')
 // import './App.css'
 
-const LitShare = ({showShareModal, setShowShareModal}) => {
-
+const LitShare = ({ showShareModal, setShowShareModal }) => {
   const onUnifiedAccessControlConditionsSelected = (shareModalOutput: any) => {
-
     // do things with share modal output
   }
 
   return (
     <div className={'App'}>
-      <button onClick={() => setShowShareModal(true)}>IPFS Access controll</button>
+      <button onClick={() => setShowShareModal(true)}>
+        IPFS Access controll
+      </button>
 
       {showShareModal && (
         <div className={'lit-share-modal'}>
-
           <ShareModal
             onClose={() => {
               setShowShareModal(false)
             }}
             onUnifiedAccessControlConditionsSelected={
               onUnifiedAccessControlConditionsSelected
-
             }
           />
-          </div>
+        </div>
       )}
     </div>
   )

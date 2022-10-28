@@ -1,7 +1,7 @@
 import { Tabs } from '@mantine/core'
 import { UsersRolesTable } from '../home/TopUserList'
-import { NftList } from './NftList'
-import UploadNFTButton from './UploadNft'
+import { ProjectNftListContainer } from './ProjectNftListContainer'
+
 function TabContainer() {
   return (
     <Tabs defaultValue="assethub" inverted>
@@ -21,8 +21,7 @@ function TabContainer() {
         <Tabs.Tab value="store">store</Tabs.Tab>
       </Tabs.List>
       <Tabs.Panel value="assethub">
-        <UploadNFTButton />
-        <NftList />
+        <ProjectNftListContainer/>
       </Tabs.Panel>
       <Tabs.Panel value="leaderboard">
         <UsersRolesTable />

@@ -3,25 +3,27 @@
 /* eslint-disable react/no-unknown-property */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
-import { Group, Text, useMantineTheme } from '@mantine/core';
-import { Dropzone, DropzoneProps } from '@mantine/dropzone';
-import { IconPhoto, IconUpload, IconX } from '@tabler/icons';
-import React, { Suspense, useState } from 'react';
+import { Group, Text, useMantineTheme } from '@mantine/core'
+import { Dropzone, DropzoneProps } from '@mantine/dropzone'
+import { IconPhoto, IconUpload, IconX } from '@tabler/icons'
+import React, { Suspense, useState } from 'react'
 // import { useLoader } from '@react-three/fiber'
-import { useGLTF } from '@react-three/drei';
-import { Canvas } from '@react-three/fiber';
+import { useGLTF } from '@react-three/drei'
+import { Canvas } from '@react-three/fiber'
 
 const ModelViewer = (model) => {
   // const url = window.URL.createObjectURL(model)
   // const reader = new FileReader();
   const newModel = React.useCallback(() => {
-    const binaryData = [];
-    binaryData.push(model);
-    const newModel = window.URL.createObjectURL(new Blob(binaryData, { type: "model/gltf+json" }))
+    const binaryData = []
+    binaryData.push(model)
+    const newModel = window.URL.createObjectURL(
+      new Blob(binaryData, { type: 'model/gltf+json' })
+    )
     console.log(newModel)
     return newModel
   }, [model])
-  const {scene} = useGLTF(newModel)
+  const { scene } = useGLTF(newModel)
   console.log(scene, 'scene')
 
   // const url = window.URL.createObjectURL(newModel)
@@ -29,7 +31,7 @@ const ModelViewer = (model) => {
 
   return (
     <>
-    <primitive object={scene} />
+      <primitive object={scene} />
     </>
   )
 }
@@ -84,11 +86,11 @@ export function NftDropZone(props: Partial<DropzoneProps>) {
           </Suspense> */}
 
           {true ? (
-          <Canvas camera={{ position: [0, 0, 10] }}>
-                        <Suspense fallback={<p>loading..</p>}>
-                <ModelViewer model={model}/>
-            </Suspense>
-            </ Canvas >
+            <Canvas camera={{ position: [0, 0, 10] }}>
+              <Suspense fallback={<p>loading..</p>}>
+                <ModelViewer model={model} />
+              </Suspense>
+            </Canvas>
           ) : (
             <>
               <Text size="xl" inline>

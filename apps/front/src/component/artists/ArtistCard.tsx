@@ -1,15 +1,15 @@
+import { Avatar, Button, createStyles, Group, Text } from '@mantine/core'
 
-import {
-  Avatar, Button, createStyles, Group, Text
-} from '@mantine/core';
-
-import { ProfileMedia } from '@use-lens/react-apollo';
-import { Maybe } from 'graphql/jsutils/Maybe';
-import Link from 'next/link';
-import { useExtractUrl } from '../../hooks/useLens/useLens';
+import { ProfileMedia } from '@use-lens/react-apollo'
+import { Maybe } from 'graphql/jsutils/Maybe'
+import Link from 'next/link'
+import { useExtractUrl } from '../../hooks/useLens/useLens'
 const useStyles = createStyles((theme) => ({
   icon: {
-    color: theme.colorScheme === 'dark' ? theme.colors.dark[3] : theme.colors.gray[5],
+    color:
+      theme.colorScheme === 'dark'
+        ? theme.colors.dark[3]
+        : theme.colors.gray[5],
   },
 
   name: {
@@ -17,11 +17,10 @@ const useStyles = createStyles((theme) => ({
   },
 }))
 
-
 type ArtistCardProps = {
-  picture?: Maybe<ProfileMedia> | undefined,
-  name?: Maybe<string> | undefined ,
-  bio?: Maybe<string> | undefined ,
+  picture?: Maybe<ProfileMedia> | undefined
+  name?: Maybe<string> | undefined
+  bio?: Maybe<string> | undefined
   id: string
 }
 
@@ -36,7 +35,6 @@ type ArtistCardProps = {
 // __typename:"Media"
 // "MediaSet"
 
-
 export const ArtistCard = ({ picture, name, bio, id }: ArtistCardProps) => {
   const { classes } = useStyles()
   console.log(picture, 'picture')
@@ -47,8 +45,13 @@ export const ArtistCard = ({ picture, name, bio, id }: ArtistCardProps) => {
     <>
       <Avatar src={url} size={94} radius="md" />
       <div>
-        <Text size="xs" sx={{ textTransform: 'uppercase' }} weight={700} color="dimmed">
-          { }
+        <Text
+          size="xs"
+          sx={{ textTransform: 'uppercase' }}
+          weight={700}
+          color="dimmed"
+        >
+          {}
         </Text>
 
         <Text size="lg" weight={500} className={classes.name}>
@@ -60,7 +63,6 @@ export const ArtistCard = ({ picture, name, bio, id }: ArtistCardProps) => {
             {bio}
           </Text>
         </Group>
-
       </div>
       <Link href={`/artist/${id}`}>
         <Button
@@ -73,8 +75,6 @@ export const ArtistCard = ({ picture, name, bio, id }: ArtistCardProps) => {
           Book tour
         </Button>
       </Link>
-
     </>
-
   )
 }

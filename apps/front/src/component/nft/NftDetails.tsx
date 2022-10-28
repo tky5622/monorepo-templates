@@ -2,7 +2,9 @@ import {
   Button,
   Container,
   createStyles,
-  Group, Text, Title
+  Group,
+  Text,
+  Title,
 } from '@mantine/core'
 // import image from './image.svg';
 
@@ -67,7 +69,12 @@ export function NftDetails() {
     <div>
       <Container>
         <div className={classes.inner}>
-          <img style={{maxHeight: 400, marginRight: 70}} src={"https://cdn.discordapp.com/attachments/1017794189452390440/1033661301207085056/image0.jpg"}/>
+          <img
+            style={{ maxHeight: 400, marginRight: 70 }}
+            src={
+              'https://cdn.discordapp.com/attachments/1017794189452390440/1033661301207085056/image0.jpg'
+            }
+          />
           <div className={classes.content}>
             <Title className={classes.title}>
               A <span className={classes.highlight}>modern</span> React <br />{' '}

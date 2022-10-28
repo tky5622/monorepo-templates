@@ -30,8 +30,6 @@ a {
   border-radius: 0.25em;
 }
 
-
-
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
