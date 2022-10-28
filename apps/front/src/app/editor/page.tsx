@@ -1,3 +1,4 @@
+'use client'
 /* eslint-disable react/react-in-jsx-scope */
 import type { NextPage } from 'next'
 import dynamic from 'next/dynamic'
