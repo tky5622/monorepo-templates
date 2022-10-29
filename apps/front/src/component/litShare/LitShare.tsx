@@ -2,14 +2,14 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-var-requires */
 // @ts-ignore
-import ShareModal from 'lit-share-modal-v3'
+// import ShareModal from 'lit-share-modal-v3'
 // const ShareModal = require('lit-share-modal-v3')
 // import './App.css'
 
 const LitShare = ({ showShareModal, setShowShareModal }: any) => {
-  const onUnifiedAccessControlConditionsSelected = (shareModalOutput: any) => {
-    // do things with share modal output
-  }
+  // const onUnifiedAccessControlConditionsSelected = (shareModalOutput: any) => {
+  //   // do things with share modal output
+  // }
 
   return (
     <div className={'App'}>
@@ -17,7 +17,7 @@ const LitShare = ({ showShareModal, setShowShareModal }: any) => {
         IPFS Access controll
       </button>
 
-      {showShareModal && (
+      {/* {showShareModal && (
         <div className={'lit-share-modal'}>
           <ShareModal
             onClose={() => {
@@ -28,7 +28,7 @@ const LitShare = ({ showShareModal, setShowShareModal }: any) => {
             }
           />
         </div>
-      )}
+      )} */}
     </div>
   )
 }
