@@ -49,26 +49,41 @@ const mintNftHandler = async (values: any, setLoading: any, setIsOpen: any) => {
   }
 }
 
+const useModelUrl = () => {
+  const [file, setFile] = useState('')
+  console.log(file)
+
+  const setModelUrlByFile = (file:any) => {
+
+    const binaryData = []
+    binaryData.push(file)
+
+    const modelUrl = window.URL.createObjectURL(
+      new Blob(binaryData, { type: 'model/gltf+json' })
+    )
+    setFile(modelUrl)
+    console.log(file, modelUrl, 'inside function')
+
+  }
+
+  return { file, setModelUrlByFile}
+}
+
+
 const UploadNftModal: any = ({ isOpen, setIsOpen }: any) => {
   // const { setNftList } = useContext(AppContext)
-  const [name, setName] = useState('')
   const [description, setDescription] = useState('')
-
-  const [file, setFile] = useState('')
 
   const NFT_COLLECTION_MUMBAI_CONTRACT = 'YOUR_CONTRACT_ID'
   // const nft = useNFTCollection(NFT_COLLECTION_MUMBAI_CONTRACT)
 
-  const onChangeHandle = (event: any) => {
-    setFile(event.target.files[0])
-  }
-  // const address = useAddress()
-  const address = 'true'
+  const { file, setModelUrlByFile } =  useModelUrl()
+
   const form = useForm({
     initialValues: {
       name: '',
       description,
-      file: file,
+      file: '',
     },
   })
 
@@ -76,7 +91,6 @@ const UploadNftModal: any = ({ isOpen, setIsOpen }: any) => {
     setIsOpen(false)
   }
 
-  console.log(isOpen, 'uploda nft modal', form.values)
   const [showShareModal, setShowShareModal] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
@@ -122,8 +136,9 @@ const UploadNftModal: any = ({ isOpen, setIsOpen }: any) => {
                     />
                     <NftDropZone
                       type={'file'}
-                      id={file}
-                      onChange={onChangeHandle}
+                      id={'file'}
+                      file={file}
+                      onChangeForm={setModelUrlByFile}
                       {...form.getInputProps('file')}
                     />
                   </form>

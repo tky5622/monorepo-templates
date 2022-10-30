@@ -22,19 +22,19 @@ const RootLayout: React.FC<PropsWithChildren> = ({ children }) => {
         <title>Next.js</title>
       </Head>
       <body>
-          <RootStyleRegistry>
+        <RootStyleRegistry>
           {/* <ColorSchemeProvider
               colorScheme={'dark'}
               toggleColorScheme={toggleColorScheme}
           > */}
-            <ApolloProvider client={client}>
+          <ApolloProvider client={client}>
             <Layout>
               {children}
             </Layout>
-            </ApolloProvider>
+          </ApolloProvider>
 
           {/* </ColorSchemeProvider> */}
-          </RootStyleRegistry>
+        </RootStyleRegistry>
       </body>
     </html>
   )
