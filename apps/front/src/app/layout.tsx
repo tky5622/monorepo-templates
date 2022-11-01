@@ -2,13 +2,14 @@
 /* eslint-disable no-constant-condition */
 import { ApolloProvider } from '@apollo/client'
 // import { ColorScheme, ColorSchemeProvider } from '@mantine/core'
+import Head from 'next/head'
 import React, { PropsWithChildren } from 'react'
+import { RecoilRoot } from 'recoil'
 import client from '../../apollo-client'
 import Layout from '../component/layout/Layout'
 import '../styles/globals.css'
 import '../styles/player.css'
 import RootStyleRegistry from './emotion'
-import Head from 'next/head'
 
 const RootLayout: React.FC<PropsWithChildren> = ({ children }) => {
   // const [colorScheme, setColorScheme] = useState<ColorScheme>('dark')
@@ -27,12 +28,13 @@ const RootLayout: React.FC<PropsWithChildren> = ({ children }) => {
               colorScheme={'dark'}
               toggleColorScheme={toggleColorScheme}
           > */}
+          <RecoilRoot>
           <ApolloProvider client={client}>
             <Layout>
               {children}
             </Layout>
           </ApolloProvider>
-
+          </RecoilRoot>
           {/* </ColorSchemeProvider> */}
         </RootStyleRegistry>
       </body>

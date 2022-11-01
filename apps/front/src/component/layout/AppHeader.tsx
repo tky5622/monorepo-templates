@@ -10,8 +10,11 @@ import {
 } from '@mantine/core'
 import { MantineLogo } from '@mantine/ds'
 import { useDisclosure } from '@mantine/hooks'
+import { useAccount } from '@web3modal/react'
 import Link from 'next/link'
-import WalletConnectContainer from '../walletConnect/WalletConnectContainer'
+import { WalletConnectContainer } from '../walletConnect/WalletConnectContainer'
+import { UserMenu } from './UserMenu'
+
 const HEADER_HEIGHT = 60
 
 type AppHeaderProps = {
@@ -64,14 +67,6 @@ const useStyles = createStyles((theme) => ({
   },
 }))
 
-interface HeaderActionProps {
-  links: {
-    link: string
-    label: string
-    links: { link: string; label: string }[]
-  }[]
-}
-
 const links = [
   {
     link: '',
@@ -91,12 +86,15 @@ const links = [
 export function AppHeader() {
   const { classes } = useStyles()
   const [opened, { toggle }] = useDisclosure(false)
+  const { isConnected, address } = useAccount()
+
   const items = links.map((link) => {
     const menuItems = link.links?.map((item) => (
       <Link key={item.link} href={link.link}>
         <Menu.Item>{item.label}</Menu.Item>
       </Link>
     ))
+
 
     if (menuItems) {
       return (
@@ -144,10 +142,13 @@ export function AppHeader() {
             <MantineLogo size={28} />
           </Link>
         </Group>
-        <Group spacing={5} className={classes.links}>
+        <Group spacing={5} className={classes.links}>\
           {items}
         </Group>
-          <WalletConnectContainer />
+
+        {isConnected ?
+          <UserMenu address={address}/> :
+        <WalletConnectContainer/>}
       </Container>
     </Header>
   )

@@ -49,9 +49,7 @@ const mintNftHandler = async (values: any, setLoading: any, setIsOpen: any) => {
   }
 }
 
-const useModelUrl = () => {
-  const [file, setFile] = useState('')
-  console.log(file)
+const useModelUrl = (setValues: any) => {
 
   const setModelUrlByFile = (file:any) => {
 
@@ -61,12 +59,12 @@ const useModelUrl = () => {
     const modelUrl = window.URL.createObjectURL(
       new Blob(binaryData, { type: 'model/gltf+json' })
     )
-    setFile(modelUrl)
+    setValues({file: modelUrl})
     console.log(file, modelUrl, 'inside function')
 
   }
 
-  return { file, setModelUrlByFile}
+  return { setModelUrlByFile}
 }
 
 
@@ -77,7 +75,6 @@ const UploadNftModal: any = ({ isOpen, setIsOpen }: any) => {
   const NFT_COLLECTION_MUMBAI_CONTRACT = 'YOUR_CONTRACT_ID'
   // const nft = useNFTCollection(NFT_COLLECTION_MUMBAI_CONTRACT)
 
-  const { file, setModelUrlByFile } =  useModelUrl()
 
   const form = useForm({
     initialValues: {
@@ -86,6 +83,10 @@ const UploadNftModal: any = ({ isOpen, setIsOpen }: any) => {
       file: '',
     },
   })
+
+
+  const { setModelUrlByFile } = useModelUrl(form.setValues)
+
 
   const onClose = () => {
     setIsOpen(false)
@@ -136,8 +137,7 @@ const UploadNftModal: any = ({ isOpen, setIsOpen }: any) => {
                     />
                     <NftDropZone
                       type={'file'}
-                      id={'file'}
-                      file={file}
+                      file={form.values.file}
                       onChangeForm={setModelUrlByFile}
                       {...form.getInputProps('file')}
                     />
