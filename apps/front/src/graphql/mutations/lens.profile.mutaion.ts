@@ -14,8 +14,13 @@ export type CreateProfileRequest = {
 
 
 export const ProfileMutation = gql`
-mutation createProfile($request: CreateProfileRequest!) {
-  createProfile(request: $request) {
+mutation CreateProfile {
+  createProfile(request:{
+                handle: "devjoshstevens",
+                profilePictureUri: null,
+                followNFTURI: null,
+                followModule: null
+                }) {
     ... on RelayerResult {
       txHash
     }

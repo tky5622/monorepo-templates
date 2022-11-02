@@ -3,6 +3,7 @@
 
 import { AppShell } from '@mantine/core'
 import React from 'react'
+import { useRefreshAuthToken } from '../../hooks/useLens/useLens'
 import WalletConnectModal from '../walletConnect/WalletConnectModal'
 import AppHeader from './AppHeader'
 import { FooterLinks } from './Footer'
@@ -12,6 +13,23 @@ type LayoutProps = {
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
+  // const router = useRouter()
+  const { refreshTokenHandler } = useRefreshAuthToken()
+
+
+  React.useEffect(() => {
+    listenForRouteChangeEvents()
+    // const test = refreshTokenHandler()
+  }, [])
+
+  async function listenForRouteChangeEvents() {
+    const test = await refreshTokenHandler()
+    console.log(test, 'test layout')
+    // router.events.on('routeChangeStart', () => {
+    //   refreshAuthToken()
+    // })
+  }
+
   return (
     <AppShell
       padding="md"
