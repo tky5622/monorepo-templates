@@ -1,5 +1,5 @@
 {
-  "window.zoomLevel": 1,
+  "window.zoomLevel": -0.0910347954528925,
   "explorer.sortOrder": "type",
   // Editor
   "editor.autoIndent": "full",
@@ -103,5 +103,13 @@
       "oidc-issuer-url": "https://keycloak.kashmora.com/auth/realms/ngx",
       "api-url": "https://api.kashmora.com"
     }
-  }
+  },
+  "audioCues.lineHasBreakpoint": "off",
+  "audioCues.lineHasFoldedArea": "off",
+  "audioCues.lineHasInlineSuggestion": "off",
+  "audioCues.noInlayHints": "off",
+  "audioCues.onDebugBreak": "off",
+  "audioCues.taskEnded": "off",
+  "audioCues.terminalQuickFix": "off",
+  "audioCues.lineHasError": "off"
 }

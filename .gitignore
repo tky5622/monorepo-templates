@@ -35,3 +35,7 @@ artifacts
 
 # Next.js
 .next
+.nx-cache
+/front/.next
+/dist
+/tmp

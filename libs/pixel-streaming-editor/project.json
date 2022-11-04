@@ -6,7 +6,7 @@
   "tags": [],
   "targets": {
     "build": {
-      "executor": "@nrwl/web:rollup",
+      "executor": "@nrwl/rollup:rollup",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/pixel-streaming-editor",
@@ -34,7 +34,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/pixel-streaming-editor"],
+      "outputs": ["{workspaceRoot}/coverage/libs/pixel-streaming-editor"],
       "options": {
         "jestConfig": "libs/pixel-streaming-editor/jest.config.ts",
         "passWithNoTests": true

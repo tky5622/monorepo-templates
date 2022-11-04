@@ -1,6 +1,7 @@
-import dynamic from 'next/dynamic'
-import React from 'react'
-import { FC } from 'react'
+"use client";
+
+import dynamic from 'next/dynamic';
+import React, { FC } from 'react';
 
 type MyComponenProps = {
   children: React.ReactNode
